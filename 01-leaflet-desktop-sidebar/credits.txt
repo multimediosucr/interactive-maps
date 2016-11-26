@@ -1,0 +1,29 @@
+http://leafletjs.com/
+
+http://www.mapquest.com/
+
+http://cssreset.com
+
+http://code.jquery.com/jquery-2.1.0.js
+
+//cdnjs.cloudflare.com/ajax/libs/jquery.lazyload/1.9.1/jquery.lazyload.min.js (http://www.appelsiini.net/projects/lazyload)
+
+jquery.history.js (https://github.com/browserstate/history.js/)
+
+leaflet.rrose (https://github.com/erictheise/rrose)
+
+L.Control.Zoomslider (http://kartena.github.io/Leaflet.zoomslider/)
+
+
+
+http://ajaxload.info/
+
+http://glyphicons.com/
+
+http://closure-compiler.appspot.com/home
+
+https://www.guidgenerator.com/online-guid-generator.aspx
+
+https://git-scm.com/
+
+https://atom.io/
