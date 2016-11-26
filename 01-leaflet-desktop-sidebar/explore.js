@@ -69,7 +69,7 @@
 	
 	// Load data
 	$.ajax({
-	    url: 'http://www.franceimage.com/json/youtube.json',
+	    url: '/json/youtube.json',
 	    //jsonpCallback: "processJSON",
 	    jsonp: false,
 	    dataType: "jsonp"
