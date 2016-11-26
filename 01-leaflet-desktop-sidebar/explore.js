@@ -69,7 +69,7 @@
 	
 	// Load data
 	$.ajax({
-	    url: '/json/youtube.json',
+	    url: testdata_url,
 	    //jsonpCallback: "processJSON",
 	    jsonp: false,
 	    dataType: "jsonp"
