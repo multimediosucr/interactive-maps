@@ -41,8 +41,8 @@
         });
 		
 	// create the tile layer with correct attribution
-	L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-    	attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+	L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 	}).addTo(map);
 	
 	map.setView(new L.LatLng(stateObj.lat, stateObj.lng), stateObj.zoom);
