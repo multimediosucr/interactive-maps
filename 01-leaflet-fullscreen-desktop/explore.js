@@ -58,7 +58,6 @@
 	
 	// Templates
 	var postContentTpl = document.getElementById('postContentTpl').innerHTML;
-	console.log(postContentTpl);
 	var tooltipTpl = document.getElementById('tooltipTpl').innerHTML;
 	var stickyTooltipTpl = document.getElementById('stickyTooltipTpl').innerHTML;
 	
