@@ -58,6 +58,7 @@
 	
 	// Templates
 	var postContentTpl = document.getElementById('postContentTpl').innerHTML;
+	console.log(postContentTpl);
 	var tooltipTpl = document.getElementById('tooltipTpl').innerHTML;
 	var stickyTooltipTpl = document.getElementById('stickyTooltipTpl').innerHTML;
 	
@@ -134,7 +135,6 @@
 
 	// Map event handlers
 	map.on('moveend', function(e) {
-		//console.log('moveend');
 		stateObj.lat = map.getCenter().lat.toFixed(6);
 		stateObj.lng = map.getCenter().lng.toFixed(6);
 		stateObj.zoom = map.getZoom();
@@ -143,18 +143,9 @@
 	});
 	
 	map.on('moveend resize', function(e) {
-		//console.log('moveend resize');
 		refreshPostlist();
 	});
 
-// Not a good idea: seems to block map loading
-//	map.on('zoomend', function(e) {
-//		//console.log('zoomend');
-//		if(stateObj.selectedPostId != 1) {
-//			map.setView(markers[stateObj.selectedPostId].getLatLng(), map.getZoom());
-//		}
-//	});
-	
 	map.on('popupclose', popupClosed);
 	
 	function popupClosed(e) {
