@@ -145,20 +145,6 @@
 		refreshPostlist();
 	});
 
-	map.on('popupclose', popupClosed);
-	
-	function popupClosed(e) {
-		if(e.popup === stickyPopup) {
-			if (stateObj.selectedPostId != -1) {
-				$("div.postContent[data-postId=" + stateObj.selectedPostId + "]").removeClass("selected");
-				markers[stateObj.selectedPostId]._resetZIndex();
-				markers[stateObj.selectedPostId].setIcon(markerIcon);
-				stateObj.selectedPostId = -1;
-				updateHistory();
-			}
-		}
-	}
-	
 	
 	// Marker clicked
 	function markerClicked(e) {
@@ -344,10 +330,8 @@
 	
 	// Close sticky popup and open a new one if needed
 	function updateStickyPopup() {
-		map.off('popupclose', popupClosed);
 		map.closePopup(tooltipPopup);
 		map.removeLayer(stickyPopup);
-		map.on('popupclose', popupClosed);
 		
 		if(stateObj.selectedPostId != -1 && markers[stateObj.selectedPostId]) {
 			// Create popup			
