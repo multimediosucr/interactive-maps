@@ -39,6 +39,7 @@
         zoomControl: false,
 		zoomsliderControl: true
         });
+	L.control.scale().addTo(map);
 		
 	// create the tile layer with correct attribution
 	L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', {
