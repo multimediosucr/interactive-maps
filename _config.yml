@@ -1,0 +1,16 @@
+future: true
+
+encoding: UTF-8
+
+markdown: kramdown
+
+kramdown:
+  entity_output: as_input
+  
+exclude: ['CNAME', 'README.md']
+
+defaults:
+  - scope:
+      path: "_posts/youtube"
+    values:
+      type: "youtube"
