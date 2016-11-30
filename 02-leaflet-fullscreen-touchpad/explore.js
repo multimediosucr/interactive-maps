@@ -106,6 +106,7 @@
 	// Initialize marker
 	function initMarker(m) {
 		map.addLayer(m);
+		/*
 		m.on('click', markerClicked);
 		m.on('mouseover', function(e) { 
 			map.dragging.disable();
@@ -132,7 +133,7 @@
 				markers[e.target.postId].setIcon(markerIcon);
 			}
 		});
-
+		*/
 	}
 
 	// Map event handlers
@@ -142,6 +143,10 @@
 		stateObj.zoom = map.getZoom();
 		
 		updateHistory();
+	});
+	
+	map.on('movestart', function(e) {
+		map.closePopup(tooltipPopup);
 	});
 	
 	map.on('moveend resize', function(e) {
@@ -230,7 +235,9 @@
 			return 0;
 		});
 		
-		console.log(postlistToCenter[0].title + ' ' + postlistToCenter[0].distanceToCenter);
+		showTooltip(postlistToCenter[0].guid);
+		markers[postlistToCenter[0].guid].setIcon(markerHoverIcon);
+		markers[postlistToCenter[0].guid]._bringToFront();
 	}
 
 
