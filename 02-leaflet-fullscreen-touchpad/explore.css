@@ -98,6 +98,19 @@
 		overflow: hidden;
 	}	
 	
+	#center {
+		margin: 0 auto; 
+		height: 30px;
+		width: 30px;
+		border-radius: 50%;
+		opacity: 0.4;
+		background-color: blue;
+		z-index: 1000;
+		position: relative;
+		top: 50%;
+		left: 0;
+	}
+	
 	#listingView {
 		position: relative;
 		width: 400px;
