@@ -36,7 +36,9 @@
 	 */
 	// Create map
 	var map = new L.Map('mapCanvas', { 
+		zoomControl: false
         });
+	L.control.zoom({ position: 'topright'}).addTo(map);
 	L.control.scale().addTo(map);
 		
 	// create the tile layer with correct attribution
@@ -51,8 +53,9 @@
 	var stickyPopup = false;
 	
 	// Arrays of posts
-	var postlist = [];
+	var postlist = []; // original dataset
 	var markers = {};	// key: postId	
+	var postlistToCenter = []; // posts sorted by distance to the center of the map
 	var postlistByGlobalId = {}; // key: postId	
 	
 	// Templates
@@ -87,15 +90,16 @@
 			postlist[i].url = "https://www.youtube.com/watch?v=" + postlist[i].youtubeId;
 			postlist[i].thumbnail = "https://i.ytimg.com/vi/" + postlist[i].youtubeId + "/hqdefault.jpg";
 			var latlng = postlist[i].latlng.split(',');
-			latlng[0].trim(); latlng[1].trim();
-			var m = L.marker([latlng[0], latlng[1]], { icon: markerIcon });
+			postlist[i].lat = latlng[0].trim(); 
+			postlist[i].lng =latlng[1].trim();
+			var m = L.marker([postlist[i].lat, postlist[i].lng], { icon: markerIcon });
 			postlistByGlobalId[postlist[i].guid] = postlist[i];
 			m.postId = postlist[i].guid;
 			markers[postlist[i].guid] = m; 
 			initMarker(m);
 		}
-				
-		refreshPostlist();	
+		
+		refreshPostlistView();	
 	}
 	
 	
@@ -141,7 +145,7 @@
 	});
 	
 	map.on('moveend resize', function(e) {
-		refreshPostlist();
+		refreshPostlistView();	
 	});
 
 	
@@ -214,109 +218,21 @@
 		updateHistory();
 	}
 		
-	// Refresh post listing on page load or when the map has moved or when an item has been removed
-	function refreshPostlist() {
-		var postListContainer = $("#postList");
+	// Refresh post listing on page load or when the map has moved
+	function refreshPostlistView() {
 		
-		if (postListContainer[0]) {
-			postListContainer.empty();
-		
-			for (var i = 0; i < postlist.length; i++) {
-				if(map.getBounds().contains(markers[postlist[i].guid].getLatLng())) {
-					postlist[i].lazyload = true;
-					postListContainer.append( Mustache.render(postContentTpl, postlist[i]) );				
-				}
-			}
-					
-			// initial view
-			if(stateObj.selectedPostId != -1 && markers[stateObj.selectedPostId]) {
-				$("div.postContent[data-postId=" + stateObj.selectedPostId + "]").addClass("selected");
-				markers[stateObj.selectedPostId].setIcon(markerSelectedIcon);
-				markers[stateObj.selectedPostId]._bringToFront();
-				updateStickyPopup();						
-			}
-			setTimeout(function(){ scrollToSelectedOrFirst(); }, 200); //timeout needed for firefox
-
-			bindPostContentEvents();
-		}
-	}
-	
-
-	// Bind events to postContent 
-	function bindPostContentEvents() {
-		// add event handlers
-		$("img.lazy").lazyload({
-			effect : "fadeIn",
-			skip_invisible  : true
+		// Sort it
+		postlistToCenter = postlist.sort(function (a, b) {
+			a.distanceToCenter = map.distance(map.getCenter(), L.latLng(a.lat, a.lng));
+			b.distanceToCenter = map.distance(map.getCenter(), L.latLng(b.lat, b.lng));
+			if(a.distanceToCenter > b.distanceToCenter) return 1;
+			if(a.distanceToCenter < b.distanceToCenter) return -1;
+			return 0;
 		});
 		
-		$("div.postContent").on("click", postClicked);
-		
-		$("div.postContent").on("mouseenter", function(e) {
-			var postId = $(this).attr("data-postId");
-			if(postId != stateObj.selectedPostId) {
-				tooltipPopup = new L.Rrose({ offset: new L.Point(0,-10), closeButton: false, autoPan: false });	
-				var title = postlistByGlobalId[postId].title;
-				tooltipPopup.setContent(title);
-				tooltipPopup.setLatLng(markers[postId].getLatLng());
-				tooltipPopup.openOn(map);
-
-				
-				markers[postId].setIcon(markerHoverIcon);
-				markers[postId]._bringToFront();
-				$(this).addClass('hover');
-			}
-			$(this).find(".cmdContainer").show();
-		});
-					
-		$("div.postContent").on("mouseleave", function(e) {
-			var postId = $(this).attr("data-postId");
-			$(this).removeClass('hover');
-			if(postId != stateObj.selectedPostId) {
-				map.closePopup(tooltipPopup);
-
-				markers[postId]._resetZIndex();
-				markers[postId].setIcon(markerIcon);
-			}
-			$(this).find(".cmdContainer").hide();
-		});
-		
-		$("div.postContent a.centerMap").click(
-			function(event) {
-				event.stopPropagation();
-				event.preventDefault();				
-
-				var postId = $(this).attr("data-postId");
-				centerMapOnPost(postId);
-			});
-		
+		console.log(postlistToCenter[0].title + ' ' + postlistToCenter[0].distanceToCenter);
 	}
 
-	
-	// Post div clicked
-	function postClicked(e) {
-		var postId = $(this).attr("data-postId");
-
-		$(this).append("<div class='loading'>");
-		stateObj.selectedPostId = postId;
-		updateHistory();
-
-		// track if possible
-		if(typeof ga == 'function') { 
-			ga('send', 'event', {
-			    eventCategory: 'Outbound Link',
-			    eventAction: 'click',
-			    eventLabel: postlistByGlobalId[postId].title,
-			    hitCallback: function() {
-			      window.location = postlistByGlobalId[postId].url;
-			    }
-			  });
-		}
-		else {
-			window.location = postlistByGlobalId[postId].url;
-		}
-	}
-	
 
 	// Show tooltip of postId
 	function showTooltip(postId) {
