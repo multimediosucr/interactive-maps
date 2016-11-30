@@ -96,45 +96,12 @@
 			postlistByGlobalId[postlist[i].guid] = postlist[i];
 			m.postId = postlist[i].guid;
 			markers[postlist[i].guid] = m; 
-			initMarker(m);
+			map.addLayer(m);
 		}
 		
 		refreshPostlistView();	
 	}
 	
-	
-	// Initialize marker
-	function initMarker(m) {
-		map.addLayer(m);
-		/*
-		m.on('click', markerClicked);
-		m.on('mouseover', function(e) { 
-			map.dragging.disable();
-			// Create popup
-			if(e.target.postId != stateObj.selectedPostId) {
-				showTooltip(e.target.postId);
-			}
-			// Style marker and post in postlist
-			if(e.target.postId != stateObj.selectedPostId) {
-				markers[e.target.postId].setIcon(markerHoverIcon);
-				markers[e.target.postId]._bringToFront();
-				$("div.postContent[data-postId=" + e.target.postId + "]").addClass('hover');
-			}
-
-		});
-		m.on('mouseout', function(e) { 
-			map.dragging.enable();
-			map.closePopup(tooltipPopup);
-
-			// Style marker and post in postlist
-			$("div.postContent[data-postId=" + e.target.postId + "]").removeClass('hover');
-			if(e.target.postId != stateObj.selectedPostId) {
-				markers[e.target.postId]._resetZIndex();
-				markers[e.target.postId].setIcon(markerIcon);
-			}
-		});
-		*/
-	}
 
 	// Map event handlers
 	map.on('moveend', function(e) {
@@ -241,7 +208,7 @@
 		});
 		
 		showTooltip(postlistToCenter[0].guid);
-		markers[postlistToCenter[0].guid].setIcon(markerHoverIcon);
+		markers[postlistToCenter[0].guid].setIcon(markerSelectedIcon);
 		markers[postlistToCenter[0].guid]._bringToFront();
 	}
 
@@ -249,12 +216,39 @@
 	// Show tooltip of postId
 	function showTooltip(postId) {
 		tooltipPopup = new L.Rrose({ offset: new L.Point(0,-10), closeButton: false, autoPan: false });		
-		tooltipPopup.setContent(Mustache.render(tooltipTpl, postlistByGlobalId[postId]) );
+		tooltipPopup.setContent(Mustache.render(postContentTpl, postlistByGlobalId[postId]) );
 		tooltipPopup.setLatLng(markers[postId].getLatLng());
 		tooltipPopup.postId = postId;
 		tooltipPopup.openOn(map);
+		
+		$("div.postContent").on("click", postClicked);
 	}
 	
+	
+	// Post div clicked
+	function postClicked(e) {
+		var postId = $(this).attr("data-postId");
+
+		$(this).append("<div class='loading'>");
+		stateObj.selectedPostId = postId;
+		updateHistory();
+
+		// track if possible
+		if(typeof ga == 'function') { 
+			ga('send', 'event', {
+			    eventCategory: 'Outbound Link',
+			    eventAction: 'click',
+			    eventLabel: postlistByGlobalId[postId].title,
+			    hitCallback: function() {
+			      window.location = postlistByGlobalId[postId].url;
+			    }
+			  });
+		}
+		else {
+			window.location = postlistByGlobalId[postId].url;
+		}
+	}
+
 	
 	// Close sticky popup and open a new one if needed
 	function updateStickyPopup() {
@@ -264,7 +258,6 @@
 		if(stateObj.selectedPostId != -1 && markers[stateObj.selectedPostId]) {
 			// Create popup			
 			stickyPopup = new L.Rrose({ offset: new L.Point(0,-10), closeButton: false, autoPan: false, className: 'sticky' });	
-			postlistByGlobalId[stateObj.selectedPostId].lazyload = false;
 			stickyPopup.setContent(Mustache.render(stickyTooltipTpl, postlistByGlobalId[stateObj.selectedPostId]) );
 			stickyPopup.setLatLng(markers[stateObj.selectedPostId].getLatLng());
 			stickyPopup.postId = stateObj.selectedPostId;

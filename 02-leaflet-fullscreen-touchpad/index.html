@@ -11,7 +11,6 @@
 
 	<!-- JQuery -->
 	<script src="//code.jquery.com/jquery-3.1.1.min.js"></script>
-	<script src="lib/jquery.lazyload.js"></script>
 	<script src="lib/jquery.history.js"></script>
 	<script src="//code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 	
@@ -29,13 +28,9 @@
 	<script id="postContentTpl" type="text/mustache">
 	<div class="postContent clickable" data-postId="{{ guid }}">
 		<h4>{{ title }}</h4>
-		<div class="cmdContainer">
-			<a href="#" class="centerMap" data-postId="{{ guid }}">Center map</a>
-		</div>
 		<div class="imgContainer">
-			<img class="lazy" height="120" width="160" data-original="{{ thumbnail }}" style="display: inline;" {{ ^lazyload }}src="{{ thumbnail }}"{{ /lazyload }} /> 
+			<img height="120" width="160" src="{{ thumbnail }}" style="display: inline;" /> 
 		</div>
-		<div class="excerptContainer">{{ excerpt }}</div>
 	</div>
 	</script>
 
