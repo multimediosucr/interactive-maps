@@ -146,7 +146,12 @@
 	});
 	
 	map.on('movestart', function(e) {
+		if(tooltipPopup) {
+			markers[tooltipPopup.postId]._resetZIndex();
+			markers[tooltipPopup.postId].setIcon(markerIcon);
+		}
 		map.closePopup(tooltipPopup);
+		tooltipPopup = false;
 	});
 	
 	map.on('moveend resize', function(e) {
@@ -246,6 +251,7 @@
 		tooltipPopup = new L.Rrose({ offset: new L.Point(0,-10), closeButton: false, autoPan: false });		
 		tooltipPopup.setContent(Mustache.render(tooltipTpl, postlistByGlobalId[postId]) );
 		tooltipPopup.setLatLng(markers[postId].getLatLng());
+		tooltipPopup.postId = postId;
 		tooltipPopup.openOn(map);
 	}
 	
