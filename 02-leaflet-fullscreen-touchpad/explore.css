@@ -163,15 +163,6 @@
 	
 	div.postContent {
 		position: relative;
-		padding: 5px;
-		margin: 5px;
-		border-color: #e0e0e0;
-    	/*border-radius*/
--webkit-border-radius:10px;
-   -moz-border-radius:10px;
-        border-radius:10px;
-    	border-style: solid;
-    	border-width: 2px;
 	}
 	
 	div.postContent.hover {
@@ -185,14 +176,16 @@
 	}
 	
 	div.postContent img {
-    	/*border-radius*/
--webkit-border-radius:10px;
-   -moz-border-radius:10px;
-        border-radius:10px;
-	}
+ 	}
 	
-	div.postContent h4 {
-		font-size: 25px;
+	div.postContent .postTitle {
+		font-size: 14px;
+		position: absolute;
+		top: 0;
+		width: 100%;
+		text-align: center;
+		color: white;
+		background-color: black;
 	}
 	
 	div.cmdContainer {
