@@ -231,6 +231,8 @@
 
 		$(this).append("<div class='loading'>");
 		stateObj.selectedPostId = postId;
+		stateObj.lat = postlistByGlobalId[postId].lat;
+		stateObj.lng = postlistByGlobalId[postId].lng;
 		updateHistory();
 
 		// track if possible
