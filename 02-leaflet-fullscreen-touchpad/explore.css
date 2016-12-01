@@ -163,6 +163,7 @@
 	
 	div.postContent {
 		position: relative;
+		text-align: center;
 	}
 	
 	div.postContent.hover {
@@ -173,19 +174,6 @@
 	div.postContent.selected {
 	    background-color: #e0e0e0;
 		border-color: #c0c0c0;
-	}
-	
-	div.postContent img {
- 	}
-	
-	div.postContent .postTitle {
-		font-size: 14px;
-		position: absolute;
-		top: 0;
-		width: 100%;
-		text-align: center;
-		color: white;
-		background-color: black;
 	}
 	
 	div.cmdContainer {
