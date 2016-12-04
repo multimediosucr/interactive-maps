@@ -106,12 +106,13 @@
 
 	// Map event handlers
 	map.on('moveend', function(e) {
+		console.log('moveend');
 		stateObj.lat = map.getCenter().lat.toFixed(6);
 		stateObj.lng = map.getCenter().lng.toFixed(6);
 		stateObj.zoom = map.getZoom();
 		stateObj.selectedPostId = -1;
 		
-		updateHistory();
+		refreshPostlistView();	
 	});
 	
 	map.on('movestart', function(e) {
@@ -123,10 +124,6 @@
 		tooltipPopup = false;
 	});
 	
-	map.on('moveend resize', function(e) {
-		refreshPostlistView();	
-	});
-
 		
 	// Refresh post listing on page load or when the map has moved
 	function refreshPostlistView() {
@@ -152,8 +149,9 @@
 			markers[postlistToCenter[0].guid].setIcon(markerSelectedIcon);
 			markers[postlistToCenter[0].guid]._bringToFront();
 			stateObj.selectedPostId = postlistToCenter[0].guid;
-			updateHistory();
 		}
+		
+		updateHistory();
 	}
 
 
@@ -174,10 +172,6 @@
 		var postId = $(this).attr("data-postId");
 
 		$(this).append("<div class='loading'>");
-		stateObj.selectedPostId = postId;
-		stateObj.lat = postlistByGlobalId[postId].lat;
-		stateObj.lng = postlistByGlobalId[postId].lng;
-		updateHistory();
 
 		// track if possible
 		if(typeof ga == 'function') { 
