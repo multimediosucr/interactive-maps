@@ -50,7 +50,6 @@
 
 	// Popups
 	var tooltipPopup = false;
-	var stickyPopup = false;
 	
 	// Arrays of posts
 	var postlist = []; // original dataset
@@ -59,13 +58,10 @@
 	var postlistByGlobalId = {}; // key: postId	
 	
 	// Templates
-	var postContentTpl = document.getElementById('postContentTpl').innerHTML;
 	var tooltipTpl = document.getElementById('tooltipTpl').innerHTML;
-	var stickyTooltipTpl = document.getElementById('stickyTooltipTpl').innerHTML;
 	
 	// Marker icons
 	var markerIcon = L.divIcon({ className : 'circle', iconSize : [ 12, 12 ]});
-	var markerHoverIcon = L.divIcon({ className : 'circle hover', iconSize : [ 12, 12 ]});
 	var markerSelectedIcon = L.divIcon({ className : 'circle selected', iconSize : [ 12, 12 ]});
 
 	
@@ -99,7 +95,12 @@
 			map.addLayer(m);
 		}
 		
-		refreshPostlistView();	
+		if(stateObj.selectedPostId != -1 && markers[stateObj.selectedPostId]) {
+			map.setView(markers[stateObj.selectedPostId].getLatLng(), map.getZoom());
+			showTooltip(stateObj.selectedPostId);
+			markers[stateObj.selectedPostId].setIcon(markerSelectedIcon);
+			markers[stateObj.selectedPostId]._bringToFront();
+		}
 	}
 	
 
@@ -108,6 +109,7 @@
 		stateObj.lat = map.getCenter().lat.toFixed(6);
 		stateObj.lng = map.getCenter().lng.toFixed(6);
 		stateObj.zoom = map.getZoom();
+		stateObj.selectedPostId = -1;
 		
 		updateHistory();
 	});
@@ -125,75 +127,6 @@
 		refreshPostlistView();	
 	});
 
-	
-	// Marker clicked
-	function markerClicked(e) {
-		var doShowTooltip = false;
-		if (stateObj.selectedPostId == -1) {
-			stateObj.selectedPostId = e.target.postId;
-			$("div.postContent[data-postId=" + stateObj.selectedPostId + "]").removeClass("hover");
-			$("div.postContent[data-postId=" + stateObj.selectedPostId + "]").addClass("selected");
-			markers[stateObj.selectedPostId].setIcon(markerSelectedIcon);
-			markers[stateObj.selectedPostId]._bringToFront();
-		}
-		else {
-			if(stateObj.selectedPostId == e.target.postId) {
-				$("div.postContent[data-postId=" + stateObj.selectedPostId + "]").removeClass("selected");
-				$("div.postContent[data-postId=" + stateObj.selectedPostId + "]").addClass("hover");
-				markers[stateObj.selectedPostId].setIcon(markerHoverIcon);
-				markers[stateObj.selectedPostId]._bringToFront();
-				stateObj.selectedPostId = -1;
-				doShowTooltip = true;
-			}
-			else {
-				$("div.postContent[data-postId=" + stateObj.selectedPostId + "]").removeClass("selected");
-				markers[stateObj.selectedPostId]._resetZIndex();
-				markers[stateObj.selectedPostId].setIcon(markerIcon);
-				stateObj.selectedPostId = e.target.postId;
-				$("div.postContent[data-postId=" + stateObj.selectedPostId + "]").addClass("selected");
-				markers[stateObj.selectedPostId].setIcon(markerSelectedIcon);
-				markers[stateObj.selectedPostId]._bringToFront();
-			}
-		}
-		
-		updateStickyPopup();
-		if(doShowTooltip) {
-			showTooltip(e.target.postId);
-		}
-		
-		if (stateObj.selectedPostId != -1) { scrollToSelectedOrFirst(); }
-		
-		updateHistory();
-	}
-	
-	// Center map on postId and make it selected
-	function centerMapOnPost(postId) {
-		map.setView(markers[postId].getLatLng(), map.getZoom());
-
-		if (stateObj.selectedPostId == -1) {
-			stateObj.selectedPostId = postId;
-			$("div.postContent[data-postId=" + stateObj.selectedPostId + "]").removeClass("hover");
-			$("div.postContent[data-postId=" + stateObj.selectedPostId + "]").addClass("selected");
-			markers[stateObj.selectedPostId].setIcon(markerSelectedIcon);
-			markers[stateObj.selectedPostId]._bringToFront();
-		}
-		else {
-			if(stateObj.selectedPostId != postId) {
-				$("div.postContent[data-postId=" + stateObj.selectedPostId + "]").removeClass("selected");
-				markers[stateObj.selectedPostId]._resetZIndex();
-				markers[stateObj.selectedPostId].setIcon(markerIcon);
-				stateObj.selectedPostId = postId;
-				$("div.postContent[data-postId=" + stateObj.selectedPostId + "]").removeClass("hover");
-				$("div.postContent[data-postId=" + stateObj.selectedPostId + "]").addClass("selected");
-				markers[stateObj.selectedPostId].setIcon(markerSelectedIcon);
-				markers[stateObj.selectedPostId]._bringToFront();
-			}
-		}
-
-		updateStickyPopup();
-		
-		updateHistory();
-	}
 		
 	// Refresh post listing on page load or when the map has moved
 	function refreshPostlistView() {
@@ -213,12 +146,13 @@
 		var centerPoint = map.latLngToContainerPoint(map.getCenter());
 		var markerPoint = map.latLngToContainerPoint(markers[postlistToCenter[0].guid].getLatLng());
 		var pixelsFromMarkerToCenter = Math.pow(Math.pow(centerPoint.y - markerPoint.y ,2) + Math.pow(centerPoint.x - markerPoint.x ,2), 1/2); // Pythagore
-		console.log(pixelsFromMarkerToCenter);
 		
 		if(pixelsFromMarkerToCenter < (centerDiameter/2 - markerDiameter/2)) {
 			showTooltip(postlistToCenter[0].guid);
 			markers[postlistToCenter[0].guid].setIcon(markerSelectedIcon);
 			markers[postlistToCenter[0].guid]._bringToFront();
+			stateObj.selectedPostId = postlistToCenter[0].guid;
+			updateHistory();
 		}
 	}
 
@@ -226,7 +160,7 @@
 	// Show tooltip of postId
 	function showTooltip(postId) {
 		tooltipPopup = new L.Rrose({ offset: new L.Point(0,-10), closeButton: false, autoPan: false });		
-		tooltipPopup.setContent(Mustache.render(postContentTpl, postlistByGlobalId[postId]) );
+		tooltipPopup.setContent(Mustache.render(tooltipTpl, postlistByGlobalId[postId]) );
 		tooltipPopup.setLatLng(markers[postId].getLatLng());
 		tooltipPopup.postId = postId;
 		tooltipPopup.openOn(map);
@@ -261,21 +195,6 @@
 		}
 	}
 
-	
-	// Close sticky popup and open a new one if needed
-	function updateStickyPopup() {
-		map.closePopup(tooltipPopup);
-		map.removeLayer(stickyPopup);
-		
-		if(stateObj.selectedPostId != -1 && markers[stateObj.selectedPostId]) {
-			// Create popup			
-			stickyPopup = new L.Rrose({ offset: new L.Point(0,-10), closeButton: false, autoPan: false, className: 'sticky' });	
-			stickyPopup.setContent(Mustache.render(stickyTooltipTpl, postlistByGlobalId[stateObj.selectedPostId]) );
-			stickyPopup.setLatLng(markers[stateObj.selectedPostId].getLatLng());
-			stickyPopup.postId = stateObj.selectedPostId;
-			map.addLayer(stickyPopup);
-		}
-	}
 	
 	
 	// Search actions (using geonames web services)

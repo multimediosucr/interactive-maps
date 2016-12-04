@@ -25,21 +25,13 @@
 	<!-- Templating -->
 	<script src="//cdnjs.cloudflare.com/ajax/libs/mustache.js/2.2.1/mustache.min.js" type="text/javascript"></script>
 
-	<script id="postContentTpl" type="text/mustache">
+	<script id="tooltipTpl" type="text/mustache">
 	<div class="postContent clickable" data-postId="{{ guid }}">
 		<img height="150" width="200" src="{{ thumbnail }}" /> 
 		<div style="font-size: 14px; position: absolute; top: 0; width: 100%; text-align: center; color: white; background-color: black;">{{ title }}</div>
 		<img style="height: 30px; width: 30px; position: absolute; top: 120px; left: 85px" src="images/YouTube-social-squircle_red_48px.png" />
 	</div>
 	</script>
-
-	<script id="stickyTooltipTpl" type="text/mustache">
-		{{ title }}
- 	</script>
-
-	<script id="tooltipTpl" type="text/mustache">
-		{{ title }}
- 	</script>
 	
 	<!-- My stuff -->
 	<link rel="stylesheet" href="explore.css" />
