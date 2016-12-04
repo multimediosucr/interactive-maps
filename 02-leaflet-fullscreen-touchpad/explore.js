@@ -207,9 +207,19 @@
 			return 0;
 		});
 		
-		showTooltip(postlistToCenter[0].guid);
-		markers[postlistToCenter[0].guid].setIcon(markerSelectedIcon);
-		markers[postlistToCenter[0].guid]._bringToFront();
+		// is the nearest point to center near enough to popup a tooltip
+		var centerDiameter = 30;
+		var markerDiameter = 12;
+		var centerPoint = map.latLngToContainerPoint(map.getCenter());
+		var markerPoint = map.latLngToContainerPoint(markers[postlistToCenter[0].guid].getLatLng());
+		var pixelsFromMarkerToCenter = Math.pow(Math.pow(centerPoint.y - markerPoint.y ,2) + Math.pow(centerPoint.x - markerPoint.x ,2), 1/2); // Pythagore
+		console.log(pixelsFromMarkerToCenter);
+		
+		if(pixelsFromMarkerToCenter < (centerDiameter/2 - markerDiameter/2)) {
+			showTooltip(postlistToCenter[0].guid);
+			markers[postlistToCenter[0].guid].setIcon(markerSelectedIcon);
+			markers[postlistToCenter[0].guid]._bringToFront();
+		}
 	}
 
 
