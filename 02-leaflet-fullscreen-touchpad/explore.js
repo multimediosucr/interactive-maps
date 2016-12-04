@@ -105,15 +105,16 @@
 	
 
 	// Map event handlers
-	map.on('moveend', function(e) {
-		console.log('moveend');
+	function mapMoveEnd(e) {
 		stateObj.lat = map.getCenter().lat.toFixed(6);
 		stateObj.lng = map.getCenter().lng.toFixed(6);
 		stateObj.zoom = map.getZoom();
 		stateObj.selectedPostId = -1;
 		
 		refreshPostlistView();	
-	});
+	}
+	
+	map.on('moveend', mapMoveEnd);
 	
 	map.on('movestart', function(e) {
 		if(tooltipPopup) {
@@ -149,6 +150,10 @@
 			markers[postlistToCenter[0].guid].setIcon(markerSelectedIcon);
 			markers[postlistToCenter[0].guid]._bringToFront();
 			stateObj.selectedPostId = postlistToCenter[0].guid;
+			
+			map.off('moveend', mapMoveEnd);
+			map.setView(markers[postlistToCenter[0].guid].getLatLng(), map.getZoom());
+			map.on('moveend', mapMoveEnd);
 		}
 		
 		updateHistory();
