@@ -96,7 +96,7 @@
 		}
 		
 		if(stateObj.selectedPostId != -1 && markers[stateObj.selectedPostId]) {
-			map.setView(markers[stateObj.selectedPostId].getLatLng(), map.getZoom());
+			map.panTo(markers[stateObj.selectedPostId].getLatLng());
 			showTooltip(stateObj.selectedPostId);
 			markers[stateObj.selectedPostId].setIcon(markerSelectedIcon);
 			markers[stateObj.selectedPostId]._bringToFront();
@@ -150,10 +150,7 @@
 			markers[postlistToCenter[0].guid].setIcon(markerSelectedIcon);
 			markers[postlistToCenter[0].guid]._bringToFront();
 			stateObj.selectedPostId = postlistToCenter[0].guid;
-			
-			map.off('moveend', mapMoveEnd);
-			map.setView(markers[postlistToCenter[0].guid].getLatLng(), map.getZoom());
-			map.on('moveend', mapMoveEnd);
+			//map.panTo(markers[postlistToCenter[0].guid].getLatLng());  // comment it as map.off() does not seem to work here
 		}
 		
 		updateHistory();
