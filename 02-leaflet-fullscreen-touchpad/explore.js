@@ -154,6 +154,8 @@
 			markers[postlistToCenter[0].guid].setIcon(markerSelectedIcon);
 			markers[postlistToCenter[0].guid]._bringToFront();
 			stateObj.selectedPostId = postlistToCenter[0].guid;
+			stateObj.lat = markers[postlistToCenter[0].guid].getLatLng().lat;
+			stateObj.lng = markers[postlistToCenter[0].guid].getLatLng().lng;
 		}
 		
 		updateHistory();
@@ -303,32 +305,7 @@
 		History.replaceState({}, document.title, "?" + parms);				
 	}
 	
-	function scrollToSelectedOrFirst() {
-		var success = false;
-		var container = $("html,body");
-		var padding = parseInt($("#page").css("padding-top")) + parseInt($(".postContent").css("margin-top"));
 
-		if (stateObj.selectedPostId != -1) {
-		    var scrollTo = $("div.postContent[data-postId=" + stateObj.selectedPostId + "]");
-			
-			if(scrollTo.offset()) {
-				container.animate({
-					scrollTop: scrollTo.offset().top - padding
-				});
-				success = true;
-			}
-		}
-		
-		if(!success) {
-		    var scrollTo = $("div.postContent").first();
-			
-			if(scrollTo.offset()) {
-				container.animate({
-					scrollTop: scrollTo.offset().top - padding
-				});
-			}
-		}
-	}
 
 
 
