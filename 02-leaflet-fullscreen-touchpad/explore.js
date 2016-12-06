@@ -146,11 +146,14 @@
 		var pixelsFromMarkerToCenter = Math.pow(Math.pow(centerPoint.y - markerPoint.y ,2) + Math.pow(centerPoint.x - markerPoint.x ,2), 1/2); // Pythagore
 		
 		if(pixelsFromMarkerToCenter < (centerDiameter/2 - markerDiameter/2)) {
+			map.off('moveend', mapMoveEnd);
+			map.panTo(markers[postlistToCenter[0].guid].getLatLng(), { duration: .25 });
+			setTimeout(function(){ map.on('moveend', mapMoveEnd); }, 300);
+
 			showTooltip(postlistToCenter[0].guid);
 			markers[postlistToCenter[0].guid].setIcon(markerSelectedIcon);
 			markers[postlistToCenter[0].guid]._bringToFront();
 			stateObj.selectedPostId = postlistToCenter[0].guid;
-			//map.panTo(markers[postlistToCenter[0].guid].getLatLng());  // comment it as map.off() does not seem to work here
 		}
 		
 		updateHistory();
