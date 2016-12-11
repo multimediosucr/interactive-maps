@@ -26,7 +26,7 @@ L.SoPopup = L.Popup.extend({
 			.disableScrollPropagation(this._contentNode)
 			.on(wrapper, 'contextmenu', L.DomEvent.stopPropagation);
 
-		/*
+		/* No tip
 		this._tipContainer = L.DomUtil.create('div', prefix + '-tip-container', container);
 		this._tip = L.DomUtil.create('div', prefix + '-tip', this._tipContainer);
 		*/
