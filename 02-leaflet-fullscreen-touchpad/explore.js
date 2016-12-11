@@ -125,6 +125,18 @@
 		tooltipPopup = false;
 	});
 	
+	map.on('click', function(e) {
+		if(stateObj.selectedPostId != -1) {
+			if(tooltipPopup != false) {
+				map.closePopup(tooltipPopup);
+				tooltipPopup = false;
+			}
+			else {
+				showTooltip(stateObj.selectedPostId);
+			}
+		}
+	});
+	
 		
 	// Refresh post listing on page load or when the map has moved
 	function refreshPostlistView() {
