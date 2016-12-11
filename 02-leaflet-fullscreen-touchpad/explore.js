@@ -117,9 +117,9 @@
 	map.on('moveend', mapMoveEnd);
 	
 	map.on('movestart', function(e) {
-		if(tooltipPopup) {
-			markers[tooltipPopup.postId]._resetZIndex();
-			markers[tooltipPopup.postId].setIcon(markerIcon);
+		if(stateObj.selectedPostId != -1) {
+			markers[stateObj.selectedPostId]._resetZIndex();
+			markers[stateObj.selectedPostId].setIcon(markerIcon);
 		}
 		map.closePopup(tooltipPopup);
 		tooltipPopup = false;
