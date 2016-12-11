@@ -164,7 +164,7 @@
 
 	// Show tooltip of postId
 	function showTooltip(postId) {
-		tooltipPopup = new L.SoPopup({ offset: new L.Point(0,-10), closeButton: false, autoPan: false });		
+		tooltipPopup = new L.SoPopup({ offset: new L.Point(0,0), closeButton: false, autoPan: false });		
 		tooltipPopup.setContent(Mustache.render(tooltipTpl, postlistByGlobalId[postId]) );
 		tooltipPopup.setLatLng(markers[postId].getLatLng());
 		tooltipPopup.postId = postId;
