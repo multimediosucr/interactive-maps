@@ -33,15 +33,15 @@
   </head>
   <body>
     <div id="floating-panel">
-      <input id="address" type="textbox" value="Sydney, NSW">
+      <input id="address" type="textbox" value="">
       <input id="submit" type="button" value="Geocode">
     </div>
     <div id="map"></div>
     <script>
       function initMap() {
         var map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 8,
-          center: {lat: -34.397, lng: 150.644}
+          zoom: 6,
+          center: {lat: 46.566, lng: 2.460}
         });
         var geocoder = new google.maps.Geocoder();
 
