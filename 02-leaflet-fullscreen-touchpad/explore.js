@@ -83,8 +83,8 @@
 		postlistByGlobalId = {}; // key: postId	
 		
 		for (var i = 0; i < postlist.length; i++) {
-			postlist[i].url = "https://www.youtube.com/watch?v=" + postlist[i].youtubeId;
-			postlist[i].thumbnail = "https://i.ytimg.com/vi/" + postlist[i].youtubeId + "/hqdefault.jpg";
+			postlist[i].url = "https://www.youtube.com/watch?v=" + postlist[i].videoId;
+			postlist[i].thumbnail = "https://i.ytimg.com/vi/" + postlist[i].videoId + "/hqdefault.jpg";
 			var latlng = postlist[i].latlng.split(',');
 			postlist[i].lat = latlng[0].trim(); 
 			postlist[i].lng =latlng[1].trim();

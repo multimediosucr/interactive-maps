@@ -2,5 +2,5 @@
 guid: "2e561d50166e"
 title: "Notre-Dame de Reims"
 latlng: "49.253866, 4.034053"
-youtubeId: "wHG5uPweFCo" 
+videoId: "wHG5uPweFCo" 
 ---
