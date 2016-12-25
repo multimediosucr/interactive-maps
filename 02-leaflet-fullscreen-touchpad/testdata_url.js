@@ -1,4 +1,4 @@
 ---
 ---
 
-testdata_url = "{{ "/json/youtube.json" | relative_url }}";
+testdata_url = "{{ "/json/video.json" | relative_url }}";
