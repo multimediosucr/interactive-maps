@@ -1,6 +1,6 @@
 ---
-guid: "d40f173e8ff6"
-title: "Abbaye de Clairvaux"
-latlng: "48.147401, 4.788730"
-videoId: "TJyRSpReqS0" 
+guid: "1c4938116c1f"
+title: "Abbaye de Fontfroide"
+latlng: "43.127395, 2.898422"
+videoId: "v__lw6dFtEU" 
 ---
