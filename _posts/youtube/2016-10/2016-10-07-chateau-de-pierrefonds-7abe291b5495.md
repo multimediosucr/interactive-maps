@@ -2,5 +2,5 @@
 guid: "7abe291b5495"
 title: "Château de Pierrefonds"
 latlng: "49.346968, 2.980185"
-videoId: "EtU4359NFJU" 
+youtubeId: "EtU4359NFJU" 
 ---

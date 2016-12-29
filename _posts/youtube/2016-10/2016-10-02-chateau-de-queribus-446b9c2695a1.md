@@ -2,5 +2,5 @@
 guid: "446b9c2695a1"
 title: "Château de Queribus"
 latlng: "42.836773, 2.621491"
-videoId: "hxUiayoF5Ec" 
+youtubeId: "hxUiayoF5Ec" 
 ---

@@ -2,5 +2,5 @@
 guid: "01745ed0dc74"
 title: "Château de Versailles"
 latlng: "48.804828, 2.120123"
-videoId: "ND5h5PXvBhk" 
+youtubeId: "ND5h5PXvBhk" 
 ---

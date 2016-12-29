@@ -2,5 +2,5 @@
 guid: "0a4bd7e4217c"
 title: "Phare d'Eckmühl"
 latlng: "47.798251, -4.372767"
-videoId: "9HNzzEHGsA0" 
+youtubeId: "9HNzzEHGsA0" 
 ---
