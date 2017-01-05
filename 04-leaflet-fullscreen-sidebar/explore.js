@@ -42,6 +42,7 @@
 	L.control.scale({ position: 'bottomright' }).addTo(map);
 	L.control.zoomslider({ position: 'topright' }).addTo(map);
 	var sidebar = L.control.sidebar('sidebar').addTo(map);
+	sidebar.open('markers-by-distance');
 		
 	// create the tile layer with correct attribution
 	L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -98,7 +99,7 @@
 			markers[postlist[i].guid] = m; 
 			initMarker(m);
 		}
-
+		
 		refreshPostlistView();	
 	}
 	
@@ -220,7 +221,6 @@
 		
 	// Refresh post listing on page load or when the map has moved
 	function refreshPostlistView() {
-		return;
 		var postListContainer = $("#postList");
 		
 		if (postListContainer[0]) {
