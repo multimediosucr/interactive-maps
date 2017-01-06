@@ -31,7 +31,7 @@
 	<!-- Sidebar -->
 	<link rel="stylesheet" href="lib/leaflet-sidebar.css" />
 	<script src="lib/leaflet-sidebar.js" type="text/javascript"></script>
-    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 
 	<!-- Templating -->
 	<script src="//cdnjs.cloudflare.com/ajax/libs/mustache.js/2.2.1/mustache.min.js" type="text/javascript"></script>
@@ -65,7 +65,8 @@
         <div class="sidebar-tabs">
             <ul role="tablist">
                 <li><a href="#channels" role="tab"><i class="fa fa-bars"></i></a></li>
-                <li><a href="#markers-by-distance" role="tab"><i class="fa fa-expand"></i></a></li>
+                <li><a href="#aroundList" role="tab"><i class="fa fa-expand"></i></a></li>
+                <li><a href="#postList" role="tab"><i class="fa fa-window-maximize"></i></a></li>
                 <li><a href="#settings" role="tab"><i class="fa fa-gear"></i></a></li>
             </ul>
 
@@ -78,23 +79,18 @@
         <!-- Tab panes -->
         <div class="sidebar-content">
             <div class="sidebar-pane" id="channels">
-                <h1 class="sidebar-header">
-                    Select channel
-                    <span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
-                </h1>
             </div>
 
-            <div class="sidebar-pane" id="markers-by-distance">
-                <h1 class="sidebar-header">Markers sorted by distance<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
-                <div id="postList"></div>
+            <div class="sidebar-pane" id="aroundList">
+            </div>
+
+            <div class="sidebar-pane" id="postList">
             </div>
 
             <div class="sidebar-pane" id="settings">
-                <h1 class="sidebar-header">Settings<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
             </div>
 
             <div class="sidebar-pane" id="about">
-                <h1 class="sidebar-header">About<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
             </div>
         </div>
     </div>

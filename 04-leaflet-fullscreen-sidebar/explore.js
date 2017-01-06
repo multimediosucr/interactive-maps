@@ -42,8 +42,7 @@
 	L.control.scale({ position: 'bottomright' }).addTo(map);
 	L.control.zoomslider({ position: 'topright' }).addTo(map);
 	var sidebar = L.control.sidebar('sidebar').addTo(map);
-	sidebar.open('markers-by-distance');
-		
+	
 	// create the tile layer with correct attribution
 	L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -51,6 +50,48 @@
 	
 	map.setView(new L.LatLng(stateObj.lat, stateObj.lng), stateObj.zoom);
 
+	// Map event handlers
+	map.on('moveend', function(e) {
+		stateObj.lat = map.getCenter().lat.toFixed(6);
+		stateObj.lng = map.getCenter().lng.toFixed(6);
+		stateObj.zoom = map.getZoom();
+		
+		updateHistory();
+	});
+	
+	map.on('click', function(e) {
+		updateStickyPopup();	
+	});
+	
+	map.on('click movestart', function(e) {
+		sidebar.close();
+	});
+	
+	// Sidebar event handlers
+	sidebar.on('content', function(e) {
+		if(e.id == 'postList') {
+			refreshPostlistView();
+		}
+		if(e.id == 'aroundList') {
+			refreshMarkersAroundView();
+		}
+	});
+	sidebar.on('closing', function(e) {
+		var postListContainer = $("#aroundList");
+		
+		if (postListContainer[0]) {
+			postListContainer.empty();
+		}
+		
+		postListContainer = $("#postList");
+		
+		if (postListContainer[0]) {
+			postListContainer.empty();
+		}
+	});
+
+	
+	
 	// Popups
 	var tooltipPopup = false;
 	var stickyPopup = false;
@@ -82,7 +123,7 @@
 
 
 	
-	// Parse JSON input. Can be called at initial loading or by selecting an input file
+	// Parse JSON input
 	function processJSON(data) {
 		postlist = data;
 		markers = {};	// key: postId	
@@ -92,7 +133,8 @@
 			postlist[i].url = "https://www.youtube.com/watch?v=" + postlist[i].youtubeId;
 			postlist[i].thumbnail = "https://i.ytimg.com/vi/" + postlist[i].youtubeId + "/hqdefault.jpg";
 			var latlng = postlist[i].latlng.split(',');
-			latlng[0].trim(); latlng[1].trim();
+			postlist[i].lat = latlng[0].trim(); 
+			postlist[i].lng =latlng[1].trim();
 			var m = L.marker([latlng[0], latlng[1]], { icon: markerIcon });
 			postlistByGlobalId[postlist[i].guid] = postlist[i];
 			m.postId = postlist[i].guid;
@@ -100,7 +142,12 @@
 			initMarker(m);
 		}
 		
-		refreshPostlistView();	
+		// initial view
+		if(stateObj.selectedPostId != -1 && markers[stateObj.selectedPostId]) {
+			markers[stateObj.selectedPostId].setIcon(markerSelectedIcon);
+			markers[stateObj.selectedPostId]._bringToFront();
+			updateStickyPopup();						
+		}
 	}
 	
 	
@@ -109,45 +156,27 @@
 		map.addLayer(m);
 		m.on('click', markerClicked);
 		m.on('mouseover', function(e) { 
-			map.dragging.disable();
 			// Create popup
 			if(e.target.postId != stateObj.selectedPostId) {
 				showTooltip(e.target.postId);
 			}
-			// Style marker and post in postlist
+			// Style marker
 			if(e.target.postId != stateObj.selectedPostId) {
 				markers[e.target.postId].setIcon(markerHoverIcon);
 				markers[e.target.postId]._bringToFront();
-				$("div.postContent[data-postId=" + e.target.postId + "]").addClass('hover');
 			}
-
 		});
 		m.on('mouseout', function(e) { 
-			map.dragging.enable();
+			// Close popup
 			map.closePopup(tooltipPopup);
-
-			// Style marker and post in postlist
-			$("div.postContent[data-postId=" + e.target.postId + "]").removeClass('hover');
+			// Style marker
 			if(e.target.postId != stateObj.selectedPostId) {
 				markers[e.target.postId]._resetZIndex();
 				markers[e.target.postId].setIcon(markerIcon);
 			}
 		});
-
 	}
 
-	// Map event handlers
-	map.on('moveend', function(e) {
-		stateObj.lat = map.getCenter().lat.toFixed(6);
-		stateObj.lng = map.getCenter().lng.toFixed(6);
-		stateObj.zoom = map.getZoom();
-		
-		updateHistory();
-	});
-	
-	map.on('moveend resize', function(e) {
-		refreshPostlistView();	
-	});
 
 	
 	// Marker clicked
@@ -155,26 +184,20 @@
 		var doShowTooltip = false;
 		if (stateObj.selectedPostId == -1) {
 			stateObj.selectedPostId = e.target.postId;
-			$("div.postContent[data-postId=" + stateObj.selectedPostId + "]").removeClass("hover");
-			$("div.postContent[data-postId=" + stateObj.selectedPostId + "]").addClass("selected");
 			markers[stateObj.selectedPostId].setIcon(markerSelectedIcon);
 			markers[stateObj.selectedPostId]._bringToFront();
 		}
 		else {
 			if(stateObj.selectedPostId == e.target.postId) {
-				$("div.postContent[data-postId=" + stateObj.selectedPostId + "]").removeClass("selected");
-				$("div.postContent[data-postId=" + stateObj.selectedPostId + "]").addClass("hover");
 				markers[stateObj.selectedPostId].setIcon(markerHoverIcon);
 				markers[stateObj.selectedPostId]._bringToFront();
 				stateObj.selectedPostId = -1;
 				doShowTooltip = true;
 			}
 			else {
-				$("div.postContent[data-postId=" + stateObj.selectedPostId + "]").removeClass("selected");
 				markers[stateObj.selectedPostId]._resetZIndex();
 				markers[stateObj.selectedPostId].setIcon(markerIcon);
 				stateObj.selectedPostId = e.target.postId;
-				$("div.postContent[data-postId=" + stateObj.selectedPostId + "]").addClass("selected");
 				markers[stateObj.selectedPostId].setIcon(markerSelectedIcon);
 				markers[stateObj.selectedPostId]._bringToFront();
 			}
@@ -185,41 +208,11 @@
 			showTooltip(e.target.postId);
 		}
 		
-		if (stateObj.selectedPostId != -1) { scrollToSelectedOrFirst(); }
-		
 		updateHistory();
 	}
 	
-	// Center map on postId and make it selected
-	function centerMapOnPost(postId) {
-		map.setView(markers[postId].getLatLng(), map.getZoom());
-
-		if (stateObj.selectedPostId == -1) {
-			stateObj.selectedPostId = postId;
-			$("div.postContent[data-postId=" + stateObj.selectedPostId + "]").removeClass("hover");
-			$("div.postContent[data-postId=" + stateObj.selectedPostId + "]").addClass("selected");
-			markers[stateObj.selectedPostId].setIcon(markerSelectedIcon);
-			markers[stateObj.selectedPostId]._bringToFront();
-		}
-		else {
-			if(stateObj.selectedPostId != postId) {
-				$("div.postContent[data-postId=" + stateObj.selectedPostId + "]").removeClass("selected");
-				markers[stateObj.selectedPostId]._resetZIndex();
-				markers[stateObj.selectedPostId].setIcon(markerIcon);
-				stateObj.selectedPostId = postId;
-				$("div.postContent[data-postId=" + stateObj.selectedPostId + "]").removeClass("hover");
-				$("div.postContent[data-postId=" + stateObj.selectedPostId + "]").addClass("selected");
-				markers[stateObj.selectedPostId].setIcon(markerSelectedIcon);
-				markers[stateObj.selectedPostId]._bringToFront();
-			}
-		}
-
-		updateStickyPopup();
 		
-		updateHistory();
-	}
-		
-	// Refresh post listing on page load or when the map has moved
+	// Refresh post listing
 	function refreshPostlistView() {
 		var postListContainer = $("#postList");
 		
@@ -232,15 +225,35 @@
 					postListContainer.append( Mustache.render(postContentTpl, postlist[i]) );				
 				}
 			}
-					
-			// initial view
-			if(stateObj.selectedPostId != -1 && markers[stateObj.selectedPostId]) {
-				$("div.postContent[data-postId=" + stateObj.selectedPostId + "]").addClass("selected");
-				markers[stateObj.selectedPostId].setIcon(markerSelectedIcon);
-				markers[stateObj.selectedPostId]._bringToFront();
-				updateStickyPopup();						
+
+			bindPostContentEvents();
+		}
+	}
+	
+	
+	// Refresh view
+	function refreshMarkersAroundView() {
+		var postlistToCenter = postlist.slice(0); // clone
+			
+		postlistToCenter.sort(function (a, b) {
+			a.distanceToCenter = map.distance(map.getCenter(), L.latLng(a.lat, a.lng));
+			b.distanceToCenter = map.distance(map.getCenter(), L.latLng(b.lat, b.lng));
+			if(a.distanceToCenter > b.distanceToCenter) return 1;
+			if(a.distanceToCenter < b.distanceToCenter) return -1;
+			return 0;
+		});
+
+		var postListContainer = $("#aroundList");
+		
+		if (postListContainer[0]) {
+			postListContainer.empty();
+		
+			for (var i = 0; i < postlistToCenter.length; i++) {
+				if(map.getBounds().contains(markers[postlistToCenter[i].guid].getLatLng())) {
+					postlistToCenter[i].lazyload = true;
+					postListContainer.append( Mustache.render(postContentTpl, postlistToCenter[i]) );				
+				}
 			}
-			setTimeout(function(){ scrollToSelectedOrFirst(); }, 200); //timeout needed for firefox
 
 			bindPostContentEvents();
 		}
@@ -349,99 +362,6 @@
 	}
 	
 	
-	// Search actions (using geonames web services)
-	$("#searchform").submit(function( event ) {
-		event.preventDefault();
-		var query = $("#search").val().trim();
-		
-		var zipcodePattern = /^(\d{5})?$/;
-		
-		var items = [];
-		if(zipcodePattern.test(query)) {
-			var url = "http://api.geonames.org/postalCodeSearchJSON?postalcode=" + query + "&country=FR&maxRows=10&username=franceimage";
-			$.getJSON(url, function(data) {	
-				if(data.postalCodes.length == 1) {
-					var val = data.postalCodes[0];
-					map.setView([val.lat, val.lng], 13);
-				} else {
-					$.each(data.postalCodes, function(key, val) {
-						items.push( "<li class='resultItem'><a href='#'  data-lat='" + val.lat + "' data-lng='" + val.lng + "'>" + val.placeName + "</a></li>" );
-					});
-					populateResults(items);
-				}
-			});
-		}
-		else {
-			var url = "http://api.geonames.org/searchJSON?fcode=ADM4&country=FR&name_equals=" + encodeURIComponent(query) + "&maxRows=10&lang=en&username=franceimage";
-			$.getJSON(url, function(data) {	
-				
-				if(data.geonames.length == 1) {
-					var val = data.geonames[0];
-					map.setView([val.lat, val.lng], 13);
-				} 
-				
-				if(data.geonames.length > 1) {
-					$.each(data.geonames, function(key, val) {
-						items.push( "<li class='resultItem'><a href='#' data-lat='" + val.lat + "' data-lng='" + val.lng + "'>" + val.name + " - " + val.adminName1 + "</a></li>" );
-					});
-					populateResults(items);
-				} 
-				
-				if(data.geonames.length == 0) {
-					var url = "http://api.geonames.org/searchJSON?country=FR&q=" + encodeURIComponent(query) + "&maxRows=10&lang=en&username=franceimage";
-					$.getJSON(url, function(data) {	
-						if(data.geonames.length == 1) {
-							var val = data.geonames[0];
-							map.setView([val.lat, val.lng], 13);
-						} else {
-							$.each(data.geonames, function(key, val) {
-								items.push( "<li class='resultItem'><a href='#' data-lat='" + val.lat + "' data-lng='" + val.lng + "'>" + val.name + " - " + val.adminName1 + "</a></li>" );
-							});
-							populateResults(items);
-						}
-					});
-				}
-			});
-		}
-	
-	
-		function populateResults(items) {	
-			$( "<ul/>", {
-			    "class": "",
-			    html: items.join( "" )
-			  }).appendTo("#searchResults");
-			
-			$(".resultItem a").click(function(event) {
-				event.stopPropagation();
-				event.preventDefault();				
-
-				$("#searchResults").html("");
-				$("#infoPanel").hide();
-				var lat = $(this).data("lat");
-				var lng = $(this).data("lng");
-				map.setView([lat, lng], 13);
-			});
-			
-			$("#infoPanel").show();
-		}
-	});
-	
-	$("#search").bind("mouseup", function(e) {
-		setTimeout(function() {
-			if($("#search").val() == "") {
-				$("#searchResults").html("");
-				$("#infoPanel").hide();
-			}
-		}, 1);
-	});
-	
-	$("#closeInfoPanel").click(function(event) {
-		event.stopPropagation();
-		event.preventDefault();				
-
-		$("#searchResults").html("");
-		$("#infoPanel").hide();
-	});
 	
 
 	// Utilities
@@ -455,6 +375,7 @@
 				
 		History.replaceState({}, document.title, "?" + parms);				
 	}
+	
 	
 	function scrollToSelectedOrFirst() {
 		var success = false;
