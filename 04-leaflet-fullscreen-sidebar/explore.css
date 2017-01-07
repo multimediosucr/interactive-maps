@@ -16,7 +16,7 @@ html, body, #mapCanvas {
 	background-color: grey;
 }
 
-.leaflet-map-pane img {
+.leaflet-map-pane img.leaflet-tile {
 	filter: brightness(60%);
 }
 
@@ -54,4 +54,18 @@ div.circle.hover {
 
 div.circle.selected {
     background-color: #000000;
+}
+
+/* Popups */
+.leaflet-popup.tooltip .leaflet-popup-content-wrapper {
+	background-color: white;
+}
+
+.leaflet-popup .leaflet-popup-content-wrapper {
+	background-color: black;
+}
+.leaflet-popup h4 {
+	text-align: center;
+	color: white;
+	font-size: 1.4em;
 }

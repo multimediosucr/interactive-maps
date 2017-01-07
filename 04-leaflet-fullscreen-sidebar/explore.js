@@ -60,23 +60,12 @@
 	});
 	
 	map.on('click', function(e) {
+		sidebar.close();
 		updateStickyPopup();	
 	});
 	
-	map.on('click movestart', function(e) {
+	map.on('movestart', function(e) {
 		sidebar.close();
-	});
-	
-	// Sidebar event handlers
-	sidebar.on('content', function(e) {
-		if(e.id == 'postList') {
-			refreshPostlistView();
-		}
-		if(e.id == 'aroundList') {
-			refreshMarkersAroundView();
-		}
-	});
-	sidebar.on('closing', function(e) {
 		var postListContainer = $("#aroundList");
 		
 		if (postListContainer[0]) {
@@ -88,6 +77,19 @@
 		if (postListContainer[0]) {
 			postListContainer.empty();
 		}
+	});
+	
+	// Sidebar event handlers
+	sidebar.on('content', function(e) {
+		if(e.id == 'postList') {
+			refreshPostlistView();
+		}
+		if(e.id == 'aroundList') {
+			refreshMarkersAroundView();
+		}
+	});
+	
+	sidebar.on('closing', function(e) {
 	});
 
 	
@@ -226,7 +228,7 @@
 				}
 			}
 
-			bindPostContentEvents();
+			bindPostContentEvents(postListContainer);
 		}
 	}
 	
@@ -255,15 +257,16 @@
 				}
 			}
 
-			bindPostContentEvents();
+			bindPostContentEvents(postListContainer);
 		}
 	}
 	
 
 	// Bind events to postContent 
-	function bindPostContentEvents() {
+	function bindPostContentEvents(container) {
 		// add event handlers
 		$("img.lazy").lazyload({
+			container: container,
 			effect : "fadeIn",
 			skip_invisible  : true
 		});
@@ -273,7 +276,7 @@
 		$("div.postContent").on("mouseenter", function(e) {
 			var postId = $(this).attr("data-postId");
 			if(postId != stateObj.selectedPostId) {
-				tooltipPopup = L.responsivePopup({ offset: new L.Point(10,10), closeButton: false, autoPan: false });	
+				tooltipPopup = L.responsivePopup({ offset: new L.Point(10,10), closeButton: false, autoPan: false, className: 'tooltip' });	
 				var title = postlistByGlobalId[postId].title;
 				tooltipPopup.setContent(title);
 				tooltipPopup.setLatLng(markers[postId].getLatLng());
@@ -284,7 +287,6 @@
 				markers[postId]._bringToFront();
 				$(this).addClass('hover');
 			}
-			$(this).find(".cmdContainer").show();
 		});
 					
 		$("div.postContent").on("mouseleave", function(e) {
@@ -296,17 +298,7 @@
 				markers[postId]._resetZIndex();
 				markers[postId].setIcon(markerIcon);
 			}
-			$(this).find(".cmdContainer").hide();
 		});
-		
-		$("div.postContent a.centerMap").click(
-			function(event) {
-				event.stopPropagation();
-				event.preventDefault();				
-
-				var postId = $(this).attr("data-postId");
-				centerMapOnPost(postId);
-			});
 		
 	}
 
@@ -315,24 +307,7 @@
 	function postClicked(e) {
 		var postId = $(this).attr("data-postId");
 
-		$(this).append("<div class='loading'>");
-		stateObj.selectedPostId = postId;
-		updateHistory();
-
-		// track if possible
-		if(typeof ga == 'function') { 
-			ga('send', 'event', {
-			    eventCategory: 'Outbound Link',
-			    eventAction: 'click',
-			    eventLabel: postlistByGlobalId[postId].title,
-			    hitCallback: function() {
-			      window.location = postlistByGlobalId[postId].url;
-			    }
-			  });
-		}
-		else {
-			window.location = postlistByGlobalId[postId].url;
-		}
+		centerMapOnPost(postId);
 	}
 	
 
@@ -362,7 +337,50 @@
 	}
 	
 	
+	// Center map on postId and make it selected
+	function centerMapOnPost(postId) {
+		map.setView(markers[postId].getLatLng(), map.getZoom());
+
+		if (stateObj.selectedPostId == -1) {
+			stateObj.selectedPostId = postId;
+			markers[stateObj.selectedPostId].setIcon(markerSelectedIcon);
+			markers[stateObj.selectedPostId]._bringToFront();
+		}
+		else {
+			if(stateObj.selectedPostId != postId) {
+				markers[stateObj.selectedPostId]._resetZIndex();
+				markers[stateObj.selectedPostId].setIcon(markerIcon);
+				stateObj.selectedPostId = postId;
+				markers[stateObj.selectedPostId].setIcon(markerSelectedIcon);
+				markers[stateObj.selectedPostId]._bringToFront();
+			}
+		}
+
+		updateStickyPopup();
+		
+		updateHistory();
+	}
 	
+	// Follow Link
+	function followLinkFromPost(postId) {
+		stateObj.selectedPostId = postId;
+		updateHistory();
+
+		// track if possible
+		if(typeof ga == 'function') { 
+			ga('send', 'event', {
+			    eventCategory: 'Outbound Link',
+			    eventAction: 'click',
+			    eventLabel: postlistByGlobalId[postId].title,
+			    hitCallback: function() {
+			      window.location = postlistByGlobalId[postId].url;
+			    }
+			  });
+		}
+		else {
+			window.location = postlistByGlobalId[postId].url;
+		}		
+	}	
 
 	// Utilities
 	function updateHistory() {

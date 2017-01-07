@@ -47,11 +47,22 @@
 	</script>
 
 	<script id="stickyTooltipTpl" type="text/mustache">
-		{{ title }}
+	<div data-postId="{{ guid }}">
+		<h4>{{ title }}</h4>
+		<div class="imgContainer">
+			<img class="lazy" height="195" width="260" data-original="{{ thumbnail }}" style="display: inline;" src="{{ thumbnail }}" /> 
+		</div>
+		<a href="javascript:centerMapOnPost('{{ guid }}')">Center</a>&nbsp;<a href="javascript:followLinkFromPost('{{ guid }}')">Play</a>
+	</div>
  	</script>
 
 	<script id="tooltipTpl" type="text/mustache">
-		{{ title }}
+	<div data-postId="{{ guid }}">
+		<h4>{{ title }}</h4>
+		<div class="imgContainer">
+			<img class="lazy" height="195" width="260" data-original="{{ thumbnail }}" style="display: inline;" src="{{ thumbnail }}" /> 
+		</div>
+	</div>
  	</script>
 	
 	<!-- My stuff -->
