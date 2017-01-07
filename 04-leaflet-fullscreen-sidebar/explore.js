@@ -6,8 +6,9 @@
 		lat: 46.566414,
 		lng: 2.4609375,
 		zoom: 6,
-		selectedPostId: -1
-		};
+		selectedPostId: -1,
+		channelId: ''
+	};
 	
 	function getRequestParm(name) {
 	   if(name=(new RegExp('[?&]'+encodeURIComponent(name)+'=([^&]*)')).exec(location.search)) {
@@ -31,6 +32,11 @@
 		stateObj.selectedPostId = postIdRequest;
 	}
 
+	var channelIdRequest = getRequestParm('chn');
+	if(channelIdRequest) {
+		stateObj.channelId = channelIdRequest;
+	}
+
 	/**
 	 * Map creation, controls creation and global variable setting
 	 */
@@ -39,6 +45,7 @@
         zoomControl: false,
 		zoomsliderControl: false
         });
+	var markers = L.layerGroup().addTo(map);
 	L.control.scale({ position: 'bottomright' }).addTo(map);
 	L.control.zoomslider({ position: 'topright' }).addTo(map);
 	var sidebar = L.control.sidebar('sidebar').addTo(map);
@@ -81,11 +88,16 @@
 	
 	// Sidebar event handlers
 	sidebar.on('content', function(e) {
-		if(e.id == 'postList') {
+		switch(e.id) {
+		case 'postList':
 			refreshPostlistView();
-		}
-		if(e.id == 'aroundList') {
+			break;
+		case 'aroundList':
 			refreshMarkersAroundView();
+			break;
+		case 'channels':
+			//refreshChannelsView();
+			break;
 		}
 	});
 	
@@ -100,7 +112,7 @@
 	
 	// Arrays of posts
 	var postlist = []; // original dataset
-	var markers = {};	// key: postId	
+	var markersByGlobalId = {};	// key: postId	
 	var postlistByGlobalId = {}; // key: postId	
 	
 	// Templates
@@ -113,23 +125,37 @@
 	var markerHoverIcon = L.divIcon({ className : 'circle hover', iconSize : [ 12, 12 ]});
 	var markerSelectedIcon = L.divIcon({ className : 'circle selected', iconSize : [ 12, 12 ]});
 
+	switchToChannel(stateObj.channelId);
+
 	
-	// Load data
-	$.ajax({
-	    url: testdata_url,
-	    //jsonpCallback: "processJSON",
-	    jsonp: false,
-	    dataType: "jsonp"
-	}).done(function(data){
-	});
-
-
+	function switchToChannel(channelId) {
+		var url = channels[0].url;
+		for(i=0; i<channels.length; i++) {
+			if(channels[i].id == channelId) {
+				url = channels[i].url;
+			}
+		}
+		if(url) {
+			$.ajax({
+			    url: url,
+			    //jsonpCallback: "processJSON",
+			    jsonp: false,
+			    dataType: "jsonp"
+			}).done(function(data){
+			});
+		}
+		sidebar.close();
+		stateObj.channelId = channelId;
+		updateHistory();
+	}
+	
 	
 	// Parse JSON input
 	function processJSON(data) {
 		postlist = data;
-		markers = {};	// key: postId	
+		markersByGlobalId = {};	// key: postId	
 		postlistByGlobalId = {}; // key: postId	
+		markers.clearLayers();
 		
 		for (var i = 0; i < postlist.length; i++) {
 			postlist[i].url = "https://www.youtube.com/watch?v=" + postlist[i].youtubeId;
@@ -140,14 +166,14 @@
 			var m = L.marker([latlng[0], latlng[1]], { icon: markerIcon });
 			postlistByGlobalId[postlist[i].guid] = postlist[i];
 			m.postId = postlist[i].guid;
-			markers[postlist[i].guid] = m; 
+			markersByGlobalId[postlist[i].guid] = m; 
 			initMarker(m);
 		}
 		
 		// initial view
-		if(stateObj.selectedPostId != -1 && markers[stateObj.selectedPostId]) {
-			markers[stateObj.selectedPostId].setIcon(markerSelectedIcon);
-			markers[stateObj.selectedPostId]._bringToFront();
+		if(stateObj.selectedPostId != -1 && markersByGlobalId[stateObj.selectedPostId]) {
+			markersByGlobalId[stateObj.selectedPostId].setIcon(markerSelectedIcon);
+			markersByGlobalId[stateObj.selectedPostId]._bringToFront();
 			updateStickyPopup();						
 		}
 	}
@@ -155,7 +181,7 @@
 	
 	// Initialize marker
 	function initMarker(m) {
-		map.addLayer(m);
+		markers.addLayer(m);
 		m.on('click', markerClicked);
 		m.on('mouseover', function(e) { 
 			// Create popup
@@ -164,8 +190,8 @@
 			}
 			// Style marker
 			if(e.target.postId != stateObj.selectedPostId) {
-				markers[e.target.postId].setIcon(markerHoverIcon);
-				markers[e.target.postId]._bringToFront();
+				markersByGlobalId[e.target.postId].setIcon(markerHoverIcon);
+				markersByGlobalId[e.target.postId]._bringToFront();
 			}
 		});
 		m.on('mouseout', function(e) { 
@@ -173,8 +199,8 @@
 			map.closePopup(tooltipPopup);
 			// Style marker
 			if(e.target.postId != stateObj.selectedPostId) {
-				markers[e.target.postId]._resetZIndex();
-				markers[e.target.postId].setIcon(markerIcon);
+				markersByGlobalId[e.target.postId]._resetZIndex();
+				markersByGlobalId[e.target.postId].setIcon(markerIcon);
 			}
 		});
 	}
@@ -186,22 +212,22 @@
 		var doShowTooltip = false;
 		if (stateObj.selectedPostId == -1) {
 			stateObj.selectedPostId = e.target.postId;
-			markers[stateObj.selectedPostId].setIcon(markerSelectedIcon);
-			markers[stateObj.selectedPostId]._bringToFront();
+			markersByGlobalId[stateObj.selectedPostId].setIcon(markerSelectedIcon);
+			markersByGlobalId[stateObj.selectedPostId]._bringToFront();
 		}
 		else {
 			if(stateObj.selectedPostId == e.target.postId) {
-				markers[stateObj.selectedPostId].setIcon(markerHoverIcon);
-				markers[stateObj.selectedPostId]._bringToFront();
+				markersByGlobalId[stateObj.selectedPostId].setIcon(markerHoverIcon);
+				markersByGlobalId[stateObj.selectedPostId]._bringToFront();
 				stateObj.selectedPostId = -1;
 				doShowTooltip = true;
 			}
 			else {
-				markers[stateObj.selectedPostId]._resetZIndex();
-				markers[stateObj.selectedPostId].setIcon(markerIcon);
+				markersByGlobalId[stateObj.selectedPostId]._resetZIndex();
+				markersByGlobalId[stateObj.selectedPostId].setIcon(markerIcon);
 				stateObj.selectedPostId = e.target.postId;
-				markers[stateObj.selectedPostId].setIcon(markerSelectedIcon);
-				markers[stateObj.selectedPostId]._bringToFront();
+				markersByGlobalId[stateObj.selectedPostId].setIcon(markerSelectedIcon);
+				markersByGlobalId[stateObj.selectedPostId]._bringToFront();
 			}
 		}
 		
@@ -222,7 +248,7 @@
 			postListContainer.empty();
 		
 			for (var i = 0; i < postlist.length; i++) {
-				if(map.getBounds().contains(markers[postlist[i].guid].getLatLng())) {
+				if(map.getBounds().contains(markersByGlobalId[postlist[i].guid].getLatLng())) {
 					postlist[i].lazyload = true;
 					postListContainer.append( Mustache.render(postContentTpl, postlist[i]) );				
 				}
@@ -251,7 +277,7 @@
 			postListContainer.empty();
 		
 			for (var i = 0; i < postlistToCenter.length; i++) {
-				if(map.getBounds().contains(markers[postlistToCenter[i].guid].getLatLng())) {
+				if(map.getBounds().contains(markersByGlobalId[postlistToCenter[i].guid].getLatLng())) {
 					postlistToCenter[i].lazyload = true;
 					postListContainer.append( Mustache.render(postContentTpl, postlistToCenter[i]) );				
 				}
@@ -279,12 +305,12 @@
 				tooltipPopup = L.responsivePopup({ offset: new L.Point(10,10), closeButton: false, autoPan: false, className: 'tooltip' });	
 				var title = postlistByGlobalId[postId].title;
 				tooltipPopup.setContent(title);
-				tooltipPopup.setLatLng(markers[postId].getLatLng());
+				tooltipPopup.setLatLng(markersByGlobalId[postId].getLatLng());
 				tooltipPopup.openOn(map);
 
 				
-				markers[postId].setIcon(markerHoverIcon);
-				markers[postId]._bringToFront();
+				markersByGlobalId[postId].setIcon(markerHoverIcon);
+				markersByGlobalId[postId]._bringToFront();
 				$(this).addClass('hover');
 			}
 		});
@@ -295,8 +321,8 @@
 			if(postId != stateObj.selectedPostId) {
 				map.closePopup(tooltipPopup);
 
-				markers[postId]._resetZIndex();
-				markers[postId].setIcon(markerIcon);
+				markersByGlobalId[postId]._resetZIndex();
+				markersByGlobalId[postId].setIcon(markerIcon);
 			}
 		});
 		
@@ -315,7 +341,7 @@
 	function showTooltip(postId) {
 		tooltipPopup =  L.responsivePopup({ offset: new L.Point(10,10), closeButton: false, autoPan: false });		
 		tooltipPopup.setContent(Mustache.render(tooltipTpl, postlistByGlobalId[postId]) );
-		tooltipPopup.setLatLng(markers[postId].getLatLng());
+		tooltipPopup.setLatLng(markersByGlobalId[postId].getLatLng());
 		tooltipPopup.openOn(map);
 	}
 	
@@ -325,12 +351,12 @@
 		map.closePopup(tooltipPopup);
 		map.removeLayer(stickyPopup);
 		
-		if(stateObj.selectedPostId != -1 && markers[stateObj.selectedPostId]) {
+		if(stateObj.selectedPostId != -1 && markersByGlobalId[stateObj.selectedPostId]) {
 			// Create popup			
 			stickyPopup =  L.responsivePopup({ offset: new L.Point(10,10), closeButton: false, autoPan: false, className: 'sticky' });	
 			postlistByGlobalId[stateObj.selectedPostId].lazyload = false;
 			stickyPopup.setContent(Mustache.render(stickyTooltipTpl, postlistByGlobalId[stateObj.selectedPostId]) );
-			stickyPopup.setLatLng(markers[stateObj.selectedPostId].getLatLng());
+			stickyPopup.setLatLng(markersByGlobalId[stateObj.selectedPostId].getLatLng());
 			stickyPopup.postId = stateObj.selectedPostId;
 			map.addLayer(stickyPopup);
 		}
@@ -339,20 +365,20 @@
 	
 	// Center map on postId and make it selected
 	function centerMapOnPost(postId) {
-		map.setView(markers[postId].getLatLng(), map.getZoom());
+		map.setView(markersByGlobalId[postId].getLatLng(), map.getZoom());
 
 		if (stateObj.selectedPostId == -1) {
 			stateObj.selectedPostId = postId;
-			markers[stateObj.selectedPostId].setIcon(markerSelectedIcon);
-			markers[stateObj.selectedPostId]._bringToFront();
+			markersByGlobalId[stateObj.selectedPostId].setIcon(markerSelectedIcon);
+			markersByGlobalId[stateObj.selectedPostId]._bringToFront();
 		}
 		else {
 			if(stateObj.selectedPostId != postId) {
-				markers[stateObj.selectedPostId]._resetZIndex();
-				markers[stateObj.selectedPostId].setIcon(markerIcon);
+				markersByGlobalId[stateObj.selectedPostId]._resetZIndex();
+				markersByGlobalId[stateObj.selectedPostId].setIcon(markerIcon);
 				stateObj.selectedPostId = postId;
-				markers[stateObj.selectedPostId].setIcon(markerSelectedIcon);
-				markers[stateObj.selectedPostId]._bringToFront();
+				markersByGlobalId[stateObj.selectedPostId].setIcon(markerSelectedIcon);
+				markersByGlobalId[stateObj.selectedPostId]._bringToFront();
 			}
 		}
 
@@ -391,6 +417,10 @@
 			parms = parms + "&sel=" + stateObj.selectedPostId;
 		}
 				
+		if(stateObj.channelId != '') {
+			parms = parms + "&chn=" + stateObj.channelId;
+		}
+
 		History.replaceState({}, document.title, "?" + parms);				
 	}
 	
