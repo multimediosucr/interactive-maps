@@ -111,7 +111,7 @@
 	var stickyPopup = false;
 	
 	// Arrays of posts
-	var postlist = []; // original dataset
+	var postlist = []; // original dataset (keeping only valid values e.g. with a latlng)
 	var markersByGlobalId = {};	// key: postId	
 	var postlistByGlobalId = {}; // key: postId	
 	
@@ -125,10 +125,15 @@
 	var markerHoverIcon = L.divIcon({ className : 'circle hover', iconSize : [ 12, 12 ]});
 	var markerSelectedIcon = L.divIcon({ className : 'circle selected', iconSize : [ 12, 12 ]});
 
-	switchToChannel(stateObj.channelId);
+	switchToChannel(stateObj.channelId, false);
 
 	
-	function switchToChannel(channelId) {
+	function switchToChannel(channelId, triggeredFromChannelsView) {
+		var triggeredFromChannelsView = (typeof triggeredFromChannelsView !== 'undefined') ?  triggeredFromChannelsView : true;
+		if(triggeredFromChannelsView) {
+			stateObj.selectedPostId = -1;
+		}
+		
 		var url = channels[0].url;
 		for(i=0; i<channels.length; i++) {
 			if(channels[i].id == channelId) {
@@ -146,7 +151,6 @@
 		}
 		sidebar.close();
 		stateObj.channelId = channelId;
-		stateObj.selectedPostId = -1;
 		updateStickyPopup();
 		updateHistory();
 	}
@@ -154,22 +158,25 @@
 	
 	// Parse JSON input
 	function processJSON(data) {
-		postlist = data;
+		postlist = [];
 		markersByGlobalId = {};	// key: postId	
 		postlistByGlobalId = {}; // key: postId	
 		markers.clearLayers();
 		
-		for (var i = 0; i < postlist.length; i++) {
-			postlist[i].url = "https://www.youtube.com/watch?v=" + postlist[i].youtubeId;
-			postlist[i].thumbnail = "https://i.ytimg.com/vi/" + postlist[i].youtubeId + "/hqdefault.jpg";
-			var latlng = postlist[i].latlng.split(',');
-			postlist[i].lat = latlng[0].trim(); 
-			postlist[i].lng =latlng[1].trim();
-			var m = L.marker([latlng[0], latlng[1]], { icon: markerIcon });
-			postlistByGlobalId[postlist[i].guid] = postlist[i];
-			m.postId = postlist[i].guid;
-			markersByGlobalId[postlist[i].guid] = m; 
-			initMarker(m);
+		for (var i = 0; i < data.length; i++) {
+			if(data[i].latlng) {
+				var post = data[i];
+				postlist.push(post);
+				post.url = "https://www.youtube.com/watch?v=" + post.youtubeId;
+				post.thumbnail = "https://i.ytimg.com/vi/" + post.youtubeId + "/hqdefault.jpg";
+				var latlng = post.latlng.split(',');
+				latlng[0].trim(); latlng[1].trim();
+				var m = L.marker([latlng[0], latlng[1]], { icon: markerIcon });
+				postlistByGlobalId[post.guid] = post;
+				m.postId = post.guid;
+				markersByGlobalId[post.guid] = m; 
+				initMarker(m);
+			}
 		}
 		
 		// initial view
