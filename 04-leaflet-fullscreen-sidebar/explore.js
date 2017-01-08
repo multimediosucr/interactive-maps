@@ -307,6 +307,13 @@
 	
 	// Refresh view
 	function refreshMarkersAroundView() {
+		
+		postListContainer = $("#postList");
+		
+		if (postListContainer[0]) {
+			postListContainer.empty();
+		}
+		
 		var postlistToCenter = postlist.slice(0); // clone
 			
 		postlistToCenter.sort(function (a, b) {
