@@ -170,8 +170,9 @@
 				postlist.push(post);
 				post.url = "https://www.youtube.com/watch?v=" + post.youtubeId;
 				post.thumbnail = "https://i.ytimg.com/vi/" + post.youtubeId + "/hqdefault.jpg";
-				var latlng = post.latlng.split(',');
-				latlng[0].trim(); latlng[1].trim();
+				var latlng = postlist[i].latlng.split(',');
+				postlist[i].lat = latlng[0].trim(); 
+				postlist[i].lng =latlng[1].trim();
 				var m = L.marker([latlng[0], latlng[1]], { icon: markerIcon });
 				postlistByGlobalId[post.guid] = post;
 				m.postId = post.guid;
