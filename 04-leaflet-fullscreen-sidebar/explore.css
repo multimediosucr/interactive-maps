@@ -69,3 +69,8 @@ div.circle.selected {
 	color: white;
 	font-size: 1.4em;
 }
+
+/* Channels */
+div.channel.selected {
+	background-color: yellow;
+}

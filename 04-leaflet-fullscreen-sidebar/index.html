@@ -64,6 +64,12 @@
 		</div>
 	</div>
  	</script>
+ 	
+	<script id="channelTpl" type="text/mustache">
+	<div class="channel" data-channelId="{{ id }}">
+		<a href="javascript:switchToChannel('{{ id }}')">{{ title }}</a>
+	</div>
+ 	</script>
 	
 	<!-- My stuff -->
 	<link rel="stylesheet" href="explore.css" />
@@ -75,7 +81,7 @@
         <!-- Nav tabs -->
         <div class="sidebar-tabs">
             <ul role="tablist">
-                <li><a href="#channels" role="tab"><i class="fa fa-bars"></i></a></li>
+                <li><a href="#channelList" role="tab"><i class="fa fa-bars"></i></a></li>
                 <li><a href="#aroundList" role="tab"><i class="fa fa-expand"></i></a></li>
                 <li><a href="#postList" role="tab"><i class="fa fa-window-maximize"></i></a></li>
                 <li><a href="#settings" role="tab"><i class="fa fa-gear"></i></a></li>
@@ -89,13 +95,7 @@
 
         <!-- Tab panes -->
         <div class="sidebar-content">
-            <div class="sidebar-pane" id="channels">
-              <ul>
-                <li><a href="javascript:switchToChannel('franceimage')">FranceImage</a></li>
-                <li><a href="javascript:switchToChannel('village-prefere-des-francais')">Le Village préféré des Français</a></li>
-                <li><a href="javascript:switchToChannel('monument-prefere-des-francais')">Le Monument préféré des Français</a></li>
-                <li><a href="javascript:switchToChannel('midi-en-france-suivez-le-guide')">Midi en France - Suivez le Guide</a></li>
-              </ul>
+            <div class="sidebar-pane" id="channelList">
             </div>
 
             <div class="sidebar-pane" id="aroundList">

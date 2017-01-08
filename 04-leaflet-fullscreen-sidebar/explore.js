@@ -95,8 +95,8 @@
 		case 'aroundList':
 			refreshMarkersAroundView();
 			break;
-		case 'channels':
-			//refreshChannelsView();
+		case 'channelList':
+			refreshChannelListView();
 			break;
 		}
 	});
@@ -116,6 +116,7 @@
 	var postlistByGlobalId = {}; // key: postId	
 	
 	// Templates
+	var channelTpl = document.getElementById('channelTpl').innerHTML;
 	var postContentTpl = document.getElementById('postContentTpl').innerHTML;
 	var tooltipTpl = document.getElementById('tooltipTpl').innerHTML;
 	var stickyTooltipTpl = document.getElementById('stickyTooltipTpl').innerHTML;
@@ -249,7 +250,30 @@
 	}
 	
 		
-	// Refresh post listing
+
+	// Refresh view
+	function refreshChannelListView() {
+		var channelListContainer = $("#channelList");
+		if(channelListContainer[0].children.length == 0) {
+			for (var i = 0; i < channels.length; i++) {
+				channelListContainer.append( Mustache.render(channelTpl, channels[i]) );				
+			}
+		}
+		
+		for (var i = 0; i < channels.length; i++) {
+			if(channels[i].id == stateObj.channelId) {
+				$("div.channel[data-channelId=" + channels[i].id + "]").addClass('selected');
+			}
+			else {
+				$("div.channel[data-channelId=" + channels[i].id + "]").removeClass('selected');
+			}
+		}
+
+		
+	}
+	
+	
+	// Refresh view
 	function refreshPostlistView() {
 		var postListContainer = $("#postList");
 		
