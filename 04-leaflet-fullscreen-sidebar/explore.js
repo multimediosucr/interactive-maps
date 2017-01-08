@@ -254,6 +254,12 @@
 
 	// Refresh view
 	function refreshChannelListView() {
+		postListContainer = $("#postList");
+		
+		if (postListContainer[0]) {
+			postListContainer.empty();
+		}
+		
 		var channelListContainer = $("#channelList");
 		if(channelListContainer[0].children.length == 0) {
 			for (var i = 0; i < channels.length; i++) {
@@ -276,6 +282,12 @@
 	
 	// Refresh view
 	function refreshPostlistView() {
+		var postListContainer = $("#aroundList");
+		
+		if (postListContainer[0]) {
+			postListContainer.empty();
+		}
+		
 		var postListContainer = $("#postList");
 		
 		if (postListContainer[0]) {
@@ -288,7 +300,7 @@
 				}
 			}
 
-			bindPostContentEvents(postListContainer);
+			bindPostContentEvents();
 		}
 	}
 	
@@ -317,18 +329,24 @@
 				}
 			}
 
-			bindPostContentEvents(postListContainer);
+			bindPostContentEvents();
 		}
 	}
 	
 
 	// Bind events to postContent 
-	function bindPostContentEvents(container) {
+	function bindPostContentEvents() {
 		// add event handlers
 		$("img.lazy").lazyload({
-			container: container,
+			event: 'scroll',
+			container: $(".sidebar-content"),
 			effect : "fadeIn",
 			skip_invisible  : true
+		});
+		
+		$.each( $("img.lazy").filter(":in-viewport"), function( key, value ) {	
+			var thumbnail = $(value).attr('data-original');
+			$(value).attr('src', thumbnail);
 		});
 		
 		$("div.postContent").on("click", postClicked);
