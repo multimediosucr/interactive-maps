@@ -146,6 +146,8 @@
 		}
 		sidebar.close();
 		stateObj.channelId = channelId;
+		stateObj.selectedPostId = -1;
+		updateStickyPopup();
 		updateHistory();
 	}
 	
