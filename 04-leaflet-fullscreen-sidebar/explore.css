@@ -25,10 +25,25 @@ html, body, #mapCanvas {
 	height: 30px;
 	width: 30px;
 	border-radius: 50%;
-	opacity: 0.5;
-	background-color: blue;
-	z-index: 650;
+	opacity: 0.2;
+	background-color: black;
+	z-index: 550;
 	pointer-events: none;
+}
+
+#mapGrid {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin-left: -50px; 
+	margin-top: -50px;
+	height: 100px;
+	width: 100px;
+	z-index: 550;
+	pointer-events: none;
+	
+	opacity: 0.7;
+	stroke: black;
 }
 
 .leaflet-map-pane img.leaflet-tile {
