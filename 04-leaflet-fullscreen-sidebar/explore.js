@@ -69,6 +69,14 @@
 	map.on('click', function(e) {
 		sidebar.close();
 		updateStickyPopup();	
+		// if click in the center of the map, open sidebar
+		var centerPoint = map.latLngToContainerPoint(map.getCenter());
+		var eventPoint = map.latLngToContainerPoint(e.latlng);
+		var pixelsFromEventToCenter = Math.pow(Math.pow(centerPoint.y - eventPoint.y ,2) + Math.pow(centerPoint.x - eventPoint.x ,2), 1/2); // Pythagore
+		var centerDiameter = $('#mapCenter').height();
+		if(pixelsFromEventToCenter < centerDiameter/2 + 1) {
+			sidebar.open('aroundList');
+		}
 	});
 	
 	map.on('movestart', function(e) {
@@ -246,6 +254,8 @@
 		if(doShowTooltip) {
 			showTooltip(e.target.postId);
 		}
+		
+		if (stateObj.selectedPostId != -1) { scrollToSelectedOrFirst(); }
 		
 		updateHistory();
 	}
@@ -486,8 +496,8 @@
 	
 	function scrollToSelectedOrFirst() {
 		var success = false;
-		var container = $("html,body");
-		var padding = parseInt($("#page").css("padding-top")) + parseInt($(".postContent").css("margin-top"));
+		var container = $(".sidebar-content");
+		var padding = parseInt($("#postList").css("padding-top")) + parseInt($(".postContent").css("margin-top"));
 
 		if (stateObj.selectedPostId != -1) {
 		    var scrollTo = $("div.postContent[data-postId=" + stateObj.selectedPostId + "]");
