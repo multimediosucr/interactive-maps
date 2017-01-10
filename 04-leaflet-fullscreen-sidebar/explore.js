@@ -179,8 +179,8 @@
 		
 		for (var i = 0; i < data.length; i++) {
 			if(data[i].latlng) {
-				console.log(data[i].title);
 				var post = data[i];
+				postlist.push(post);
 				post.url = "https://www.youtube.com/watch?v=" + post.youtubeId;
 				post.thumbnail = "https://i.ytimg.com/vi/" + post.youtubeId + "/hqdefault.jpg";
 				var latlng = post.latlng.split(',');
