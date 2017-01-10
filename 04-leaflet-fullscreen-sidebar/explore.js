@@ -68,6 +68,11 @@
 	
 	map.on('click', function(e) {
 		sidebar.close();
+		if(stateObj.selectedPostId != -1) {
+			markersByGlobalId[stateObj.selectedPostId]._resetZIndex();
+			markersByGlobalId[stateObj.selectedPostId].setIcon(markerIcon);
+			stateObj.selectedPostId = -1;
+		}
 		updateStickyPopup();	
 		// if click in the center of the map, open sidebar
 		var centerPoint = map.latLngToContainerPoint(map.getCenter());
