@@ -48,19 +48,21 @@
 
 	<script id="stickyTooltipTpl" type="text/mustache">
 	<div data-postId="{{ guid }}">
-		<h4>{{ title }}</h4>
+		<h4  style="position: absolute; top; 0px; width: 260px; background-color: rgba(0,0,0,0.5)">{{ title }}</h4>
 		<div class="imgContainer">
-			<img class="lazy" height="195" width="260" data-original="{{ thumbnail }}" style="display: inline;" src="{{ thumbnail }}" /> 
+			<img class="lazy" data-original="{{ thumbnail }}" style="height: 195px; width: 260px; margin-top: 0px" src="{{ thumbnail }}" /> 
 		</div>
-		<a href="javascript:centerMapOnPost('{{ guid }}')">Center</a>&nbsp;<a href="javascript:followLinkFromPost('{{ guid }}')">Play</a>
+		<h4 style="position: absolute; bottom: 0px">
+			<a href="javascript:centerMapOnPost('{{ guid }}')">Center</a>&nbsp;<a href="javascript:followLinkFromPost('{{ guid }}')">Play</i></a>
+		</h4>
 	</div>
  	</script>
 
 	<script id="tooltipTpl" type="text/mustache">
 	<div data-postId="{{ guid }}">
-		<h4>{{ title }}</h4>
+		<h4  style="position: absolute; top; 0px; width: 260px; background-color: rgba(0,0,0,0.5)">{{ title }}</h4>
 		<div class="imgContainer">
-			<img class="lazy" height="195" width="260" data-original="{{ thumbnail }}" style="display: inline;" src="{{ thumbnail }}" /> 
+			<img class="lazy" data-original="{{ thumbnail }}" style="height: 195px; width: 260px; margin-top: 0px" src="{{ thumbnail }}" /> 
 		</div>
 	</div>
  	</script>
