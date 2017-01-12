@@ -115,3 +115,19 @@ div.channel.selected {
 	margin-top: 0px;
 }
 
+
+@media (min-width: 992px) {
+	.leaflet-popup h4 {
+		font-size: 1.4em;
+		line-height: 1.4em;
+		width: 260px; 
+	}
+	
+	.leaflet-popup img {
+		height: 195px;
+		width: 260px; 
+	}
+}
+}
+
+

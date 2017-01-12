@@ -58,6 +58,15 @@
 	map.setView(new L.LatLng(stateObj.lat, stateObj.lng), stateObj.zoom);
 
 	// Map event handlers
+	map.on('resize', function(e) {
+		if(stateObj.selectedPostId != -1) {
+			markersByGlobalId[stateObj.selectedPostId]._resetZIndex();
+			markersByGlobalId[stateObj.selectedPostId].setIcon(markerIcon);
+			stateObj.selectedPostId = -1;
+		}
+		updateStickyPopup();			
+	});
+	
 	map.on('moveend', function(e) {
 		stateObj.lat = map.getCenter().lat.toFixed(6);
 		stateObj.lng = map.getCenter().lng.toFixed(6);
