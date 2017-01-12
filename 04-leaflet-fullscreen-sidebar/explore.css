@@ -86,6 +86,11 @@ div.circle.selected {
     background-color: #000000;
 }
 
+/* Channels */
+div.channel.selected {
+	background-color: yellow;
+}
+
 /* Popups */
 .leaflet-popup.tooltip .leaflet-popup-content-wrapper {
 	background-color: white;
@@ -95,12 +100,18 @@ div.circle.selected {
 	background-color: black;
 }
 .leaflet-popup h4 {
+	position: absolute; 
+	top; 0px; 
+	width: 160px; 
 	text-align: center;
 	color: white;
-	font-size: 1.4em;
+	font-size: 1em;
+	background-color: rgba(0,0,0,0.5);
 }
 
-/* Channels */
-div.channel.selected {
-	background-color: yellow;
+.leaflet-popup img {
+	height: 120px;
+	width: 160px; 
+	margin-top: 0px;
 }
+

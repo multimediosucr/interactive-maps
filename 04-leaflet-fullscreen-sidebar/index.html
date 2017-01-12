@@ -48,9 +48,9 @@
 
 	<script id="stickyTooltipTpl" type="text/mustache">
 	<div data-postId="{{ guid }}">
-		<h4  style="position: absolute; top; 0px; width: 260px; background-color: rgba(0,0,0,0.5)">{{ title }}</h4>
+		<h4>{{ title }}</h4>
 		<div class="imgContainer">
-			<img class="lazy" data-original="{{ thumbnail }}" style="height: 195px; width: 260px; margin-top: 0px" src="{{ thumbnail }}" /> 
+			<img class="lazy" data-original="{{ thumbnail }}" src="{{ thumbnail }}" /> 
 		</div>
 		<h4 style="position: absolute; bottom: 0px">
 			<a href="javascript:centerMapOnPost('{{ guid }}')">Center</a>&nbsp;<a href="javascript:followLinkFromPost('{{ guid }}')">Play</i></a>
@@ -60,9 +60,9 @@
 
 	<script id="tooltipTpl" type="text/mustache">
 	<div data-postId="{{ guid }}">
-		<h4  style="position: absolute; top; 0px; width: 260px; background-color: rgba(0,0,0,0.5)">{{ title }}</h4>
+		<h4>{{ title }}</h4>
 		<div class="imgContainer">
-			<img class="lazy" data-original="{{ thumbnail }}" style="height: 195px; width: 260px; margin-top: 0px" src="{{ thumbnail }}" /> 
+			<img class="lazy" data-original="{{ thumbnail }}" src="{{ thumbnail }}" /> 
 		</div>
 	</div>
  	</script>

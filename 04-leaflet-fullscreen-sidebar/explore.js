@@ -427,7 +427,7 @@
 		
 		if(stateObj.selectedPostId != -1 && markersByGlobalId[stateObj.selectedPostId]) {
 			// Create popup			
-			stickyPopup =  L.responsivePopup({ offset: new L.Point(10,10), closeButton: false, autoPan: false, className: 'sticky' });	
+			stickyPopup =  L.responsivePopup({ offset: new L.Point(10,10), closeButton: false, autoPan: false });	
 			postlistByGlobalId[stateObj.selectedPostId].lazyload = false;
 			stickyPopup.setContent(Mustache.render(stickyTooltipTpl, postlistByGlobalId[stateObj.selectedPostId]) );
 			stickyPopup.setLatLng(markersByGlobalId[stateObj.selectedPostId].getLatLng());
