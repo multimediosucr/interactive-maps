@@ -300,7 +300,10 @@
 			}
 		}
 
-		
+		$("div.channel").on("click", function(e) {
+			var channelId = $(this).attr("data-channelId");
+			switchToChannel(channelId);
+		});
 	}
 	
 	
