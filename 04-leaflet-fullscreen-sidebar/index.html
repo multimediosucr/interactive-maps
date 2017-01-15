@@ -99,29 +99,39 @@
         <div class="sidebar-content">
             <div class="sidebar-pane" id="channelPanel">
             	<div class="sidebar-header">
-            	Channel List - <i class="fr">Liste des chaînes</i>
+            	<i class="fr">Liste des chaînes</i> - <i class="en">Channel List</i>
             	</div>
              	<div id="channelList"></div>           	
             </div>
 
             <div class="sidebar-pane" id="aroundPanel">
             	<div class="sidebar-header">
-            	<p>Videos sorted by proximity to the center of the map</p>
             	<p class="fr">Videos triées par distance au centre de la carte</p>
+            	<p class="en">Videos sorted by proximity to the center of the map</p>
             	</div>
             	<div id="aroundList"></div> 
             </div>
 
             <div class="sidebar-pane" id="postPanel">
             	<div class="sidebar-header">
-            	<p>Videos sorted by publish date</p>
             	<p class="fr">Videos triées par date de publication</p>
+            	<p class="en">Videos sorted by publish date</p>
             	</div>
            		<div id="postList"></div> 
             </div>
 
             <div class="sidebar-pane text-panel" id="info">
-            <section>
+			<section class="fr">
+            <p>Quelques trucs ...</p>
+            <p>Vous pouvez passer sur les points avec la souris et cliquer dessus. Vous pouvez aussi amener les points au centre de la carte. Dans les 2 cas, une popup apparaîtra.</p>
+            <p>Popup: cliquez sur <i class="fa fa-youtube-play"></i> pour voir la video. Une fois sur youtube, utilisez le bouton back pour retrouver la carte dans le même état.</p>
+            <p>Popup: cliquez sur <i class="fa fa-dot-circle-o"></i> centrer la carte sur ce point (utile quand vous allez zoomer).</p>
+            <p>Popup: cliquez sur la carte pour la cacher.</p>
+            <p>Barre latérale: cliquez sur <i class="fa fa-bars"></i> pour voir une autre liste.</p>
+            <p>Barre latérale: cliquez sur <i class="fa fa-dot-circle-o"></i> voir la liste des videos. La video la plus proche de centre de la carte vient en premier. Cliquer sur la video pour la fixer sur la carte.</p>
+            <p>Barre latérale: cliquez sur <i class="fa fa-list"></i> voir la liste des videos. La plus récente vient en premier.</p>  
+            </section>        
+            <section class="en">
             <p>A few hints ...</p>
             <p>Hover on the markers and click on them. Alternatively, bring the markers to the center of the map. This will open a popup.</p>
             <p>Popup: click on <i class="fa fa-youtube-play"></i> to watch the video. When you are on youtube, use back button to find your map in the same state.</p>
@@ -131,29 +141,20 @@
             <p>Sidebar: click on <i class="fa fa-dot-circle-o"></i> to show the list of videos. The nearest to the center of the map comes first. Click on a video to pin it on the map.</p>
             <p>Sidebar: click on <i class="fa fa-list"></i> to show the list of videos. The first (most recent) in the playlist comes first.</p>          
 			</section>
-			<section class="fr">
-            <p>Quelques trucs ...</p>
-            <p>Vous pouvez passer sur les points avec la souris et cliquer dessus. Vous pouvez aussi amener les points au centre de la carte. Dans les 2 cas, une popup apparaîtra.</p>
-            <p>Popup: cliquez sur <i class="fa fa-youtube-play"></i> pour voir la video. Une fois sur youtube, utilisez le bouton back pour retrouver la carte dans le même état.</p>
-            <p>Popup: cliquez sur <i class="fa fa-dot-circle-o"></i> centrer la carte sur ce point (utile quand vous allez zoomer).</p>
-            <p>Popup: cliquez sur la carte pour la cacher.</p>
-            <p>Barre latérale: cliquez sur <i class="fa fa-bars"></i> pour voir une autre liste.</p>
-            <p>Barre latérale: cliquez sur <i class="fa fa-dot-circle-o"></i> voir la liste des videos. La video la plus proche de centre de la carte vient en premier. Cliquer sur la video pour la fixer sur la carte.</p>
-            <p>Barre latérale: cliquez sur <i class="fa fa-list"></i> voir la liste des videos. La plus récente vient en premier.</p>          
             </div>
  
             <div class="sidebar-pane text-panel" id="about">
-            <section>
-            <p>Hi,</p>
-            <p>This is an open-source project to geolocate videos of interest about France (villages, monuments, natural sites, etc ...).</p>
-            <p>You can contribute by providing consistent youtube playlists about things in France, or by filling the latlng attribute of the entries in the <a href="https://github.com/franceimage/franceimage.github.io/tree/master/map/data">existing playlists</a>.</p>
-			<p>Any comment is welcome: franceimage.com<i class="fa fa-at"></i>gmail.com.
-			</section>
 			<section class="fr">
             <p>Salut,</p>
             <p>Ceci est un projet open-source qui géocalise des vidéos youtube montrant des endroits d'intérêt en France (villages, monuments, sites naturel, etc ...).</p>
             <p>Vous pouvez contribuer en proposant des playlists youtube cohérentes ou en remplissant le champ latlng des entrées des <a href="https://github.com/franceimage/franceimage.github.io/tree/master/map/data">playlists existantes</a>.</p>
 			<p>Les commentaires sont les bienvenus: franceimage.com<i class="fa fa-at"></i>gmail.com.
+			</section>
+            <section class="en">
+            <p>Hi,</p>
+            <p>This is an open-source project to geolocate videos of interest about France (villages, monuments, natural sites, etc ...).</p>
+            <p>You can contribute by providing consistent youtube playlists about things in France, or by filling the latlng attribute of the entries in the <a href="https://github.com/franceimage/franceimage.github.io/tree/master/map/data">existing playlists</a>.</p>
+			<p>Any comment is welcome: franceimage.com<i class="fa fa-at"></i>gmail.com.
 			</section>
             </div>
         </div>
