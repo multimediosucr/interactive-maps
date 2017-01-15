@@ -47,19 +47,20 @@
 
 	<script id="stickyTooltipTpl" type="text/mustache">
 	<div data-postId="{{ guid }}">
-		<h4>{{ title }}</h4>
+		<div class="title">{{ title }}</div>
 		<div class="imgContainer">
 			<img class="lazy" data-original="{{ thumbnail }}" src="{{ thumbnail }}" /> 
 		</div>
-		<h4 style="position: absolute; bottom: 0px">
-			<a href="javascript:centerMapOnPost('{{ guid }}')">Center</a>&nbsp;<a href="javascript:followLinkFromPost('{{ guid }}')">Play</i></a>
-		</h4>
+		<div class="cmdContainer">
+			<a href="javascript:centerMapOnPost('{{ guid }}')"><i class="fa fa-dot-circle-o"></i></a>
+			<a href="javascript:followLinkFromPost('{{ guid }}')"><i class="fa fa-youtube-play"></i></a>
+		</div>
 	</div>
  	</script>
 
 	<script id="tooltipTpl" type="text/mustache">
 	<div data-postId="{{ guid }}">
-		<h4>{{ title }}</h4>
+		<div class="title">{{ title }}</div>
 		<div class="imgContainer">
 			<img class="lazy" data-original="{{ thumbnail }}" src="{{ thumbnail }}" /> 
 		</div>
@@ -84,7 +85,7 @@
         <div class="sidebar-tabs">
             <ul role="tablist">
                 <li><a href="#channelList" role="tab"><i class="fa fa-bars"></i></a></li>
-                <li><a href="#aroundList" role="tab"><i class="fa fa-arrows-alt"></i></a></li>
+                <li><a href="#aroundList" role="tab"><i class="fa fa-dot-circle-o"></i></a></li>
                 <li><a href="#postList" role="tab"><i class="fa fa-list"></i></a></li>
                 <li><a href="#settings" role="tab"><i class="fa fa-gear"></i></a></li>
             </ul>

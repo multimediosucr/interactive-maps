@@ -63,6 +63,10 @@ html, body, #mapCanvas {
 	opacity: 0.5;
 }
 
+.sidebar .fa {
+	font-size: 24px;
+}
+
 
 /* Markers */
 div.circle {
@@ -125,6 +129,10 @@ div.circle.selected {
 }
 
 /* Popups */
+.leaflet-popup .title, .leaflet-popup img, .leaflet-popup .cmdContainer {
+	width: 160px; 
+} 
+
 .leaflet-popup.tooltip .leaflet-popup-content-wrapper {
 	background-color: white;
 }
@@ -132,10 +140,9 @@ div.circle.selected {
 .leaflet-popup .leaflet-popup-content-wrapper {
 	background-color: black;
 }
-.leaflet-popup h4 {
+.leaflet-popup .title {
 	position: absolute; 
-	top; 0px; 
-	width: 160px; 
+	top: 0px; 
 	text-align: center;
 	color: white;
 	font-size: 1em;
@@ -144,21 +151,45 @@ div.circle.selected {
 
 .leaflet-popup img {
 	height: 120px;
-	width: 160px; 
 	margin-top: 0px;
 }
 
+.leaflet-popup .cmdContainer {
+	position: absolute;
+	bottom: 0;
+	text-align: center;
+}
+
+.leaflet-popup .cmdContainer .fa {
+	margin-bottom: 3px;
+	font-size: 25px;
+	margin-left: 25px;
+	margin-right: 25px;
+	color: grey;
+}
+
+.leaflet-popup .cmdContainer .fa:hover {
+	color: white;
+}
 
 @media (min-width: 992px) {
-	.leaflet-popup h4 {
+	.leaflet-popup .title, .leaflet-popup img, .leaflet-popup .cmdContainer {
+		width: 260px; 
+	} 
+	
+	.leaflet-popup .title {
 		font-size: 1.4em;
 		line-height: 1.4em;
-		width: 260px; 
 	}
 	
 	.leaflet-popup img {
 		height: 195px;
-		width: 260px; 
+	}
+	
+	.leaflet-popup .cmdContainer .fa {
+		font-size: 35px;
+		margin-left: 35px;
+		margin-right: 35px;
 	}
 }
 
