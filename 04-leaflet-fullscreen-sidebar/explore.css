@@ -55,11 +55,7 @@ html, body, #mapCanvas {
 	filter: brightness(60%);
 }
 
-.leaflet-control-zoomslider {
-	opacity: 0.5;
-}
-
-.sidebar-tabs {
+.leaflet-control-zoomslider,  .leaflet-control-zoom, .sidebar-tabs {
 	opacity: 0.5;
 }
 

@@ -110,9 +110,12 @@
 	});
 	
 	map.on('move', function(e) {
-		if(tooltipPopup) {
-			tooltipPopup.marker.fireEvent('mouseout');
+		try {
+			if(tooltipPopup) {
+				tooltipPopup.marker.fireEvent('mouseout');
+			}
 		}
+		catch(err) { console.log(err); }
 		if(hoverCenterTimeout) {
 			clearTimeout(hoverCenterTimeout);
 		}
