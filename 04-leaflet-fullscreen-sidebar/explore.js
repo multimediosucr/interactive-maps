@@ -76,13 +76,18 @@
 	});
 	
 	map.on('click', function(e) {
-		sidebar.close();
-		if(stateObj.selectedPostId != -1) {
-			markersByGlobalId[stateObj.selectedPostId]._resetZIndex();
-			markersByGlobalId[stateObj.selectedPostId].setIcon(markerIcon);
-			stateObj.selectedPostId = -1;
+		if (!$('#sidebar').hasClass('collapsed')) {
+			sidebar.close();
 		}
-		updateStickyPopup();	
+		else {
+			if(stateObj.selectedPostId != -1) {
+				markersByGlobalId[stateObj.selectedPostId]._resetZIndex();
+				markersByGlobalId[stateObj.selectedPostId].setIcon(markerIcon);
+				stateObj.selectedPostId = -1;
+			}
+		}
+		updateStickyPopup();
+	
 		// if click in the center of the map, open sidebar
 		var centerPoint = map.latLngToContainerPoint(map.getCenter());
 		var eventPoint = map.latLngToContainerPoint(e.latlng);
@@ -417,9 +422,9 @@
 	
 	// Post div clicked
 	function postClicked(e) {
+		sidebar.close();
 		var postId = $(this).attr("data-postId");
-
-		centerMapOnPost(postId);
+		selectPost(postId);
 	}
 	
 
@@ -449,10 +454,14 @@
 	}
 	
 	
-	// Center map on postId and make it selected
+	// Center map on postId 
 	function centerMapOnPost(postId) {
 		map.setView(markersByGlobalId[postId].getLatLng(), map.getZoom());
-
+		selectPost(postId);
+	}
+	
+	// Make postId selected
+	function selectPost(postId) {
 		if (stateObj.selectedPostId == -1) {
 			stateObj.selectedPostId = postId;
 			markersByGlobalId[stateObj.selectedPostId].setIcon(markerSelectedIcon);
