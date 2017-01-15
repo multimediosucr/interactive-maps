@@ -67,7 +67,38 @@
 		updateStickyPopup();			
 	});
 	
+	map.on('movestart', function(e) {
+		sidebar.close();
+		var postListContainer = $("#aroundList");
+		
+		if (postListContainer[0]) {
+			postListContainer.empty();
+		}
+		
+		postListContainer = $("#postList");
+		
+		if (postListContainer[0]) {
+			postListContainer.empty();
+		}
+	});
+	
+	map.on('move', function(e) {
+		if(tooltipPopup) {
+			tooltipPopup.marker.fireEvent('mouseout');
+		}
+		if(hoverCenterTimeout) {
+			clearTimeout(hoverCenterTimeout);
+		}
+		hoverCenterTimeout = setTimeout(showPopupForMapCenter, 1000);
+	});
+	
 	map.on('moveend', function(e) {
+		if(tooltipPopup) {
+			tooltipPopup.marker.fireEvent('mouseout');
+		}  // if there is a popup, make it sticky
+		if(hoverCenterTimeout) {
+			clearTimeout(hoverCenterTimeout);
+		}
 		stateObj.lat = map.getCenter().lat.toFixed(6);
 		stateObj.lng = map.getCenter().lng.toFixed(6);
 		stateObj.zoom = map.getZoom();
@@ -84,6 +115,7 @@
 				markersByGlobalId[stateObj.selectedPostId]._resetZIndex();
 				markersByGlobalId[stateObj.selectedPostId].setIcon(markerIcon);
 				stateObj.selectedPostId = -1;
+				updateHistory();
 			}
 		}
 		updateStickyPopup();
@@ -95,21 +127,6 @@
 		var centerDiameter = $('#mapCenter').height();
 		if(pixelsFromEventToCenter < centerDiameter/2 + 1) {
 			sidebar.open('aroundList');
-		}
-	});
-	
-	map.on('movestart', function(e) {
-		sidebar.close();
-		var postListContainer = $("#aroundList");
-		
-		if (postListContainer[0]) {
-			postListContainer.empty();
-		}
-		
-		postListContainer = $("#postList");
-		
-		if (postListContainer[0]) {
-			postListContainer.empty();
 		}
 	});
 	
@@ -134,6 +151,7 @@
 	
 	
 	// Popups
+	var hoverCenterTimeout = false;
 	var tooltipPopup = false;
 	var stickyPopup = false;
 	
@@ -232,7 +250,7 @@
 				markersByGlobalId[e.target.postId]._bringToFront();
 			}
 		});
-		m.on('mouseout', function(e) { 
+		m.on('mouseout mousedown', function(e) { 
 			// Close popup
 			map.closePopup(tooltipPopup);
 			// Style marker
@@ -240,6 +258,7 @@
 				markersByGlobalId[e.target.postId]._resetZIndex();
 				markersByGlobalId[e.target.postId].setIcon(markerIcon);
 			}
+			tooltipPopup = false;
 		});
 	}
 
@@ -388,35 +407,7 @@
 			$(value).attr('src', thumbnail);
 		});
 		
-		$("div.postContent").on("click", postClicked);
-		
-		$("div.postContent").on("mouseenter", function(e) {
-			var postId = $(this).attr("data-postId");
-			if(postId != stateObj.selectedPostId) {
-				tooltipPopup = L.responsivePopup({ offset: new L.Point(10,10), closeButton: false, autoPan: false, className: 'tooltip' });	
-				var title = postlistByGlobalId[postId].title;
-				tooltipPopup.setContent(title);
-				tooltipPopup.setLatLng(markersByGlobalId[postId].getLatLng());
-				tooltipPopup.openOn(map);
-
-				
-				markersByGlobalId[postId].setIcon(markerHoverIcon);
-				markersByGlobalId[postId]._bringToFront();
-				$(this).addClass('hover');
-			}
-		});
-					
-		$("div.postContent").on("mouseleave", function(e) {
-			var postId = $(this).attr("data-postId");
-			$(this).removeClass('hover');
-			if(postId != stateObj.selectedPostId) {
-				map.closePopup(tooltipPopup);
-
-				markersByGlobalId[postId]._resetZIndex();
-				markersByGlobalId[postId].setIcon(markerIcon);
-			}
-		});
-		
+		$("div.postContent").on("click", postClicked);		
 	}
 
 	
@@ -434,6 +425,7 @@
 		tooltipPopup.setContent(Mustache.render(tooltipTpl, postlistByGlobalId[postId]) );
 		tooltipPopup.setLatLng(markersByGlobalId[postId].getLatLng());
 		tooltipPopup.openOn(map);
+		tooltipPopup.marker = markersByGlobalId[postId];
 	}
 	
 	
@@ -550,6 +542,34 @@
 
 
 	
+	function showPopupForMapCenter() {	
+		console.log('showPopupForMapCenter');
+		if(hoverCenterTimeout) {
+			clearTimeout(hoverCenterTimeout);
+		}
+		
+		// Sort it
+		var postlistToCenter = postlist.slice(0); // clone
+
+		postlistToCenter = postlist.sort(function (a, b) {
+			a.distanceToCenter = map.distance(map.getCenter(), L.latLng(a.lat, a.lng));
+			b.distanceToCenter = map.distance(map.getCenter(), L.latLng(b.lat, b.lng));
+			if(a.distanceToCenter > b.distanceToCenter) return 1;
+			if(a.distanceToCenter < b.distanceToCenter) return -1;
+			return 0;
+		});
+		
+		// is the nearest point to center near enough to popup a tooltip
+		var centerDiameter = 30;
+		var markerDiameter = 12;
+		var centerPoint = map.latLngToContainerPoint(map.getCenter());
+		var markerPoint = map.latLngToContainerPoint(markersByGlobalId[postlistToCenter[0].guid].getLatLng());
+		var pixelsFromMarkerToCenter = Math.pow(Math.pow(centerPoint.y - markerPoint.y ,2) + Math.pow(centerPoint.x - markerPoint.x ,2), 1/2); // Pythagore
+		
+		if(pixelsFromMarkerToCenter < (centerDiameter/2 - markerDiameter/2)) {
+			markersByGlobalId[postlistToCenter[0].guid].fireEvent('mouseover');
+		}
+	}
 	
 	
 
