@@ -5,6 +5,10 @@ a {
 	text-decoration: none; 
 }
 
+.fr {
+	font-style: italic;
+}
+
 
 body {
 	padding: 0;
@@ -59,10 +63,40 @@ html, body, #mapCanvas {
 	opacity: 0.5;
 }
 
+
+/* Sidebar */
+.sidebar-header {
+	background-color: grey;
+	font-size: 15px;
+	line-height: 20px;
+}
+
+.sidebar-tabs > li.active, .sidebar-tabs > ul > li.active {
+	color: #fff;
+	background-color: grey; 
+}
+
 .sidebar .fa {
 	font-size: 24px;
 }
 
+.sidebar .text-panel {
+	font: 10pt "Helvetica Neue", Arial, Helvetica, sans-serif;
+	color: #408080;
+}
+.sidebar .text-panel .fa {
+	font-size: 10pt;
+}
+
+.sidebar .text-panel section {
+	margin-bottom: 12px;
+	border-bottom: solid 1px;
+	border-color: white;
+}
+
+.sidebar .text-panel p {
+	margin-bottom: 8px;
+}
 
 /* Markers */
 div.circle {
@@ -83,6 +117,10 @@ div.circle.selected {
 }
 
 /* Channels (sidebar) */
+#channelList {
+	margin-top: 10px;
+}
+
 .channel {
 	height: 40px;
 	clear: left;

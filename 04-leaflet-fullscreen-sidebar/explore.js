@@ -145,7 +145,7 @@
 		var pixelsFromEventToCenter = Math.pow(Math.pow(centerPoint.y - eventPoint.y ,2) + Math.pow(centerPoint.x - eventPoint.x ,2), 1/2); // Pythagore
 		var centerDiameter = $('#mapCenter').height();
 		if(pixelsFromEventToCenter < centerDiameter/2 + 1) {
-			sidebar.open('aroundList');
+			sidebar.open('aroundPanel');
 		}
 	});
 	
@@ -154,13 +154,13 @@
 	 */
 	sidebar.on('content', function(e) {
 		switch(e.id) {
-		case 'postList':
+		case 'postPanel':
 			refreshPostlistView();
 			break;
-		case 'aroundList':
+		case 'aroundPanel':
 			refreshMarkersAroundView();
 			break;
-		case 'channelList':
+		case 'channelPanel':
 			refreshChannelListView();
 			break;
 		}
