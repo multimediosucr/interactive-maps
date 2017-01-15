@@ -1,7 +1,28 @@
 	/**
-	 * Default state
-	 * Set initial state with request parm
-	 */ 
+	 * global variables
+	 */
+	// Popups
+	var hoverCenterTimeout = false;
+	var tooltipPopup = false;
+	var stickyPopup = false;
+	
+	// Arrays of posts
+	var postlist = []; // original dataset (keeping only valid values e.g. with a latlng)
+	var markersByGlobalId = {};	// key: postId	
+	var postlistByGlobalId = {}; // key: postId	
+	
+	// Templates
+	var channelTpl = document.getElementById('channelTpl').innerHTML;
+	var postContentTpl = document.getElementById('postContentTpl').innerHTML;
+	var tooltipTpl = document.getElementById('tooltipTpl').innerHTML;
+	var stickyTooltipTpl = document.getElementById('stickyTooltipTpl').innerHTML;
+	
+	// Marker icons
+	var markerIcon = L.divIcon({ className : 'circle', iconSize : [ 12, 12 ]});
+	var markerHoverIcon = L.divIcon({ className : 'circle hover', iconSize : [ 12, 12 ]});
+	var markerSelectedIcon = L.divIcon({ className : 'circle selected', iconSize : [ 12, 12 ]});
+
+	// State for history
 	var stateObj = { 
 		lat: 46.566414,
 		lng: 2.4609375,
@@ -10,6 +31,10 @@
 		channelId: ''
 	};
 	
+	
+	/**
+	 * Parse args
+	 */
 	function getRequestParm(name) {
 	   if(name=(new RegExp('[?&]'+encodeURIComponent(name)+'=([^&]*)')).exec(location.search)) {
 	      return decodeURIComponent(name[1]);
@@ -38,7 +63,7 @@
 	}
 
 	/**
-	 * Map creation, controls creation and global variable setting
+	 * Map creation, controls creation
 	 */
 	// Create map
 	var map = new L.Map('mapCanvas', { 
@@ -57,7 +82,9 @@
 	
 	map.setView(new L.LatLng(stateObj.lat, stateObj.lng), stateObj.zoom);
 
-	// Map event handlers
+	/**
+	 * Map event handlers
+	 */
 	map.on('resize', function(e) {
 		if(stateObj.selectedPostId != -1) {
 			markersByGlobalId[stateObj.selectedPostId]._resetZIndex();
@@ -130,7 +157,9 @@
 		}
 	});
 	
-	// Sidebar event handlers
+	/**
+	 * Sidebar event handlers
+	 */
 	sidebar.on('content', function(e) {
 		switch(e.id) {
 		case 'postList':
@@ -149,31 +178,15 @@
 	});
 
 	
-	
-	// Popups
-	var hoverCenterTimeout = false;
-	var tooltipPopup = false;
-	var stickyPopup = false;
-	
-	// Arrays of posts
-	var postlist = []; // original dataset (keeping only valid values e.g. with a latlng)
-	var markersByGlobalId = {};	// key: postId	
-	var postlistByGlobalId = {}; // key: postId	
-	
-	// Templates
-	var channelTpl = document.getElementById('channelTpl').innerHTML;
-	var postContentTpl = document.getElementById('postContentTpl').innerHTML;
-	var tooltipTpl = document.getElementById('tooltipTpl').innerHTML;
-	var stickyTooltipTpl = document.getElementById('stickyTooltipTpl').innerHTML;
-	
-	// Marker icons
-	var markerIcon = L.divIcon({ className : 'circle', iconSize : [ 12, 12 ]});
-	var markerHoverIcon = L.divIcon({ className : 'circle hover', iconSize : [ 12, 12 ]});
-	var markerSelectedIcon = L.divIcon({ className : 'circle selected', iconSize : [ 12, 12 ]});
-
+	/**
+	 * Let's go
+	 */
 	switchToChannel(stateObj.channelId, false);
 
 	
+	/**
+	 * Functions
+	 */
 	function switchToChannel(channelId, triggeredFromChannelsView) {
 		var triggeredFromChannelsView = (typeof triggeredFromChannelsView !== 'undefined') ?  triggeredFromChannelsView : true;
 		if(triggeredFromChannelsView) {
@@ -407,7 +420,36 @@
 			$(value).attr('src', thumbnail);
 		});
 		
-		$("div.postContent").on("click", postClicked);		
+		$("div.postContent").on("click", postClicked);	
+		
+		$("div.postContent").on("mouseenter", function(e) {
+			var postId = $(this).attr("data-postId");
+			if(postId != stateObj.selectedPostId) {
+				tooltipPopup = L.responsivePopup({ offset: new L.Point(10,10), closeButton: false, autoPan: false, className: 'tooltip' });	
+				var title = postlistByGlobalId[postId].title;
+				tooltipPopup.setContent(title);
+				tooltipPopup.setLatLng(markersByGlobalId[postId].getLatLng());
+				tooltipPopup.openOn(map);
+
+				
+				markersByGlobalId[postId].setIcon(markerHoverIcon);
+				markersByGlobalId[postId]._bringToFront();
+				$(this).addClass('hover');
+			}
+		});
+					
+		$("div.postContent").on("mouseleave", function(e) {
+			var postId = $(this).attr("data-postId");
+			$(this).removeClass('hover');
+			if(postId != stateObj.selectedPostId) {
+				map.closePopup(tooltipPopup);
+
+				markersByGlobalId[postId]._resetZIndex();
+				markersByGlobalId[postId].setIcon(markerIcon);
+			}
+		});
+		
+
 	}
 
 	
