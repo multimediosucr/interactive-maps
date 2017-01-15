@@ -2,7 +2,6 @@
 	 * global variables
 	 */
 	// Popups
-	var hoverCenterTimeout = false;
 	var tooltipPopup = false;
 	var stickyPopup = false;
 	
@@ -110,33 +109,21 @@
 	});
 	
 	map.on('move', function(e) {
-		try {
-			if(tooltipPopup) {
-				tooltipPopup.marker.fireEvent('mouseout');
-			}
-		}
-		catch(err) { console.log(err); }
-		if(hoverCenterTimeout) {
-			clearTimeout(hoverCenterTimeout);
-		}
-		hoverCenterTimeout = setTimeout(showPopupForMapCenter, 1000);
 	});
 	
-	map.on('moveend', function(e) {
-		if(tooltipPopup) {
-			var postId = tooltipPopup.postId;
-			tooltipPopup.marker.fireEvent('mouseout');
-			selectPost(postId);
-		}  
-		if(hoverCenterTimeout) {
-			clearTimeout(hoverCenterTimeout);
-		}
+	function mapMoveEnd(e) {
 		stateObj.lat = map.getCenter().lat.toFixed(6);
 		stateObj.lng = map.getCenter().lng.toFixed(6);
 		stateObj.zoom = map.getZoom();
 		
+		var postId = getPostOnMapCenter();
+		if(postId != -1) {
+			markersByGlobalId[postId].fireEvent('click');
+		}
+
 		updateHistory();
-	});
+	}
+	map.on('moveend', mapMoveEnd);
 	
 	map.on('click', function(e) {
 		if (!$('#sidebar').hasClass('collapsed')) {
@@ -497,8 +484,9 @@
 	
 	// Center map on postId 
 	function centerMapOnPost(postId) {
-		map.setView(markersByGlobalId[postId].getLatLng(), map.getZoom());
-		selectPost(postId);
+		map.off('moveend', mapMoveEnd);
+		map.panTo(markersByGlobalId[postId].getLatLng(), { duration: .25 });
+		setTimeout(function(){ map.on('moveend', mapMoveEnd); }, 300);
 	}
 	
 	// Make postId selected
@@ -591,11 +579,7 @@
 
 
 	
-	function showPopupForMapCenter() {	
-		if(hoverCenterTimeout) {
-			clearTimeout(hoverCenterTimeout);
-		}
-		
+	function getPostOnMapCenter() {	
 		// Sort it
 		var postlistToCenter = postlist.slice(0); // clone
 
@@ -614,9 +598,12 @@
 		var markerPoint = map.latLngToContainerPoint(markersByGlobalId[postlistToCenter[0].guid].getLatLng());
 		var pixelsFromMarkerToCenter = Math.pow(Math.pow(centerPoint.y - markerPoint.y ,2) + Math.pow(centerPoint.x - markerPoint.x ,2), 1/2); // Pythagore
 		
+		var ret = -1;
 		if(pixelsFromMarkerToCenter < (centerDiameter/2 - markerDiameter/2)) {
-			markersByGlobalId[postlistToCenter[0].guid].fireEvent('mouseover');
+			ret = postlistToCenter[0].guid;
 		}
+		
+		return ret;
 	}
 	
 	
