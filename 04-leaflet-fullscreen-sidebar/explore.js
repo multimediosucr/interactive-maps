@@ -121,8 +121,10 @@
 	
 	map.on('moveend', function(e) {
 		if(tooltipPopup) {
+			var postId = tooltipPopup.postId;
 			tooltipPopup.marker.fireEvent('mouseout');
-		}  // if there is a popup, make it sticky
+			selectPost(postId);
+		}  
 		if(hoverCenterTimeout) {
 			clearTimeout(hoverCenterTimeout);
 		}
@@ -468,6 +470,7 @@
 		tooltipPopup.setLatLng(markersByGlobalId[postId].getLatLng());
 		tooltipPopup.openOn(map);
 		tooltipPopup.marker = markersByGlobalId[postId];
+		tooltipPopup.postId = postId;
 	}
 	
 	
@@ -585,7 +588,6 @@
 
 	
 	function showPopupForMapCenter() {	
-		console.log('showPopupForMapCenter');
 		if(hoverCenterTimeout) {
 			clearTimeout(hoverCenterTimeout);
 		}
