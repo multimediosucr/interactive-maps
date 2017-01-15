@@ -71,7 +71,7 @@
 		zoomsliderControl: false
         });
 	var markers = L.layerGroup().addTo(map);
-	L.control.scale({ position: 'bottomright' }).addTo(map);
+	L.control.scale({ position: 'bottomright', imperial: false }).addTo(map);
 	L.control.zoomslider({ position: 'topright' }).addTo(map);
 	var sidebar = L.control.sidebar('sidebar').addTo(map);
 	
