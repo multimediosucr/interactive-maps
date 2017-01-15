@@ -112,12 +112,13 @@
 	});
 	
 	function mapMoveEnd(e) {
+		console.log('mapMoveEnd');
 		stateObj.lat = map.getCenter().lat.toFixed(6);
 		stateObj.lng = map.getCenter().lng.toFixed(6);
 		stateObj.zoom = map.getZoom();
 		
 		var postId = getPostOnMapCenter();
-		if(postId != -1) {
+		if(postId != -1 && postId != stateObj.selectedPostId) {
 			markersByGlobalId[postId].fireEvent('click');
 		}
 
