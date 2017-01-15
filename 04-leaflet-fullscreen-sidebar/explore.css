@@ -192,7 +192,6 @@ div.circle.selected {
 
 /* Posts (sidebar) */ 
 .postContent {
-	float: left;
 	height: 120px;
 	width: 160px; 
 	margin-top: 10px;
