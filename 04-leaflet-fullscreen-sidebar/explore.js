@@ -292,7 +292,7 @@
 		}
 		
 		for (var i = 0; i < channels.length; i++) {
-			if(channels[i].id == stateObj.channelId) {
+			if(channels[i].id == stateObj.channelId || (stateObj.channelId == '' && i == 0)) {
 				$("div.channel[data-channelId=" + channels[i].id + "]").addClass('selected');
 			}
 			else {
