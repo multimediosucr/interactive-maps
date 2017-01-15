@@ -308,7 +308,8 @@
 			showTooltip(e.target.postId);
 		}
 		
-		if (stateObj.selectedPostId != -1) { scrollToSelectedOrFirst(); }
+		// scroll does not yet 
+		// if (stateObj.selectedPostId != -1) { scrollToSelectedOrFirst(); }
 		
 		updateHistory();
 	}
